@@ -35,7 +35,7 @@ Project Structure
 1. Clone the project:
 ```bash
 
-git clone https://github.com/Lily-404/blog.git
+git clone https://github.com/vivekisadev/Vivek-Blog.git
 cd jimmy-blog
 ```
 
