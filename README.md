@@ -1,6 +1,6 @@
-Vivek's Blog
+Vivek's Blog - 
 A minimalist personal blog system built with Next.js 15+.
-
+```
 Technology Stack
     Framework: Next.js 13+ (App Router)
     Styling: Tailwind CSS
@@ -13,7 +13,7 @@ Features
     📱 Responsive design
     ⚡ Fast page loading
     📅 Article timeline display
-
+```
 
 Project Structure
 
