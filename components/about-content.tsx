@@ -259,7 +259,7 @@ export function AboutContent({ initialStats }: AboutContentProps) {
             <div className="space-y-3 text-zinc-600 dark:text-zinc-400">
               <p>This blog is open source. If you are interested, please order Star. You can view the source code at GitHub:</p>
               <a 
-                href="https://github.com/vivekisadev"
+                href="https://github.com/vivekisadev/Vivek-Blog"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 
