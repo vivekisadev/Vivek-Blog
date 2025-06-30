@@ -1,3 +1,10 @@
+---
+title: "extensions"
+date: "2025-06-30"
+tags: ["VS-Code","Extensions"]
+---
+
+
 # VS-Code extension which helps you become a better programmer
 
 Hey everyone,
