@@ -1,5 +1,5 @@
 ---
-title: "extensions"
+title: "VS-Code extensions everyone should know"
 date: "2025-06-30"
 tags: ["VS-Code","Extensions"]
 ---
