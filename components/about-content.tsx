@@ -95,7 +95,7 @@ export function AboutContent({ initialStats }: AboutContentProps) {
               alt="Vivek's photo"
               width={192}
               height={192}
-              className="object-cover transition-all duration-300 ease-out dark:invert"
+              className="object-cover transition-all duration-300 ease-out "
               priority
               sizes="(max-width: 768px) 128px, 192px"
               quality={100}
