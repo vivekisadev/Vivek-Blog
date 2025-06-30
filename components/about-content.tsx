@@ -105,7 +105,7 @@ export function AboutContent({ initialStats }: AboutContentProps) {
           <div className="flex-1 space-y-6 text-center md:text-left">
             <div>
               <h1 className="text-3xl font-bold mb-2">Hi, I'm Vivek</h1>
-              <p className="text-lg text-zinc-600 dark:text-zinc-400">I Love, code, and write
+              <p className="text-lg text-zinc-600 dark:text-zinc-400">I Love to love, code and write.
                 <span role="img" aria-label="emoji">&#128540;</span>
               </p>
 
