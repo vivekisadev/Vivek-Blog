@@ -32,17 +32,17 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.jimmy-blog.top'),
+  metadataBase: new URL('https://www.blogsbyvivek.vercel.com'),
   openGraph: {
     type: 'website',
     locale: 'en',
-    url: 'https://www.jimmy-blog.top',
+    url: 'https://www.blogsbyvivek.vercel.app',
     title: 'Vivek\'s Blog',
     description: 'love, code, and write.',
     siteName: 'Vivek Blog',
     images: [
       {
-        url: 'https://www.jimmy-blog.top/og-image.png',
+        url: 'https://www.blogsbyvivek.vercel.app/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Vivek Blog',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Vivek's Blog",
     description: 'Love, code, and write.',
-    images: ['https://www.jimmy-blog.top/og-image.png'],
+    images: ['https://www.blogsbyvivek.vercel.app/og-image.png'],
   },
   icons: {
     icon: '/favorite.png',
