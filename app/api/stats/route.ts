@@ -4,13 +4,10 @@ import { getPaginatedNotesAction } from '@/app/actions/notes'
 
 export async function GET() {
   try {
-    // 获取文章数量
     const posts = await getAllPosts()
     
-    // 获取随笔数量
     const { total: notesTotal } = await getPaginatedNotesAction(1, 1)
     
-    // 获取标签数量
     const tags = new Set<string>()
     posts.forEach(post => {
       if (post.tags) {
