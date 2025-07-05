@@ -151,7 +151,7 @@ GSAP is ideal for:
  Scroll-based storytelling websites
 
 
- # Check out the documentations on the official website for more examples. https://gsap.com/ 
+ **Check out the documentations on the official website for more examples. **https://gsap.com/****
 
 
 
