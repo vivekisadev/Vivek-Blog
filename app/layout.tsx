@@ -56,8 +56,8 @@ export const metadata: Metadata = {
     images: ['https://www.blogsbyvivek.vercel.app/og-image.png'],
   },
   icons: {
-    icon: '/favorite.png',
-    apple: '/favorite.png',
+    icon: '/viveklogo.jpg',
+    apple: '/viveklogo.jpg',
   },
   robots: {
     index: true,
