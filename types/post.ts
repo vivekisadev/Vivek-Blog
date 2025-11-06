@@ -1,9 +1,25 @@
 export interface Post {
   id: string;
+  slug: string;
   title: string;
   date: string;
   excerpt?: string;
   tags?: string[];
+}
+
+export interface PostMeta {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt?: string;
+  tags: string[];
+}
+
+export interface NoteMeta {
+  slug: string;
+  title: string;
+  date: string;
+  content: string;
 }
 
 export interface PostsData {

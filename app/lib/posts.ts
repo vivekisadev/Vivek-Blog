@@ -4,6 +4,7 @@ import matter from "gray-matter"
 import { remark } from "remark"
 import html from "remark-html"
 import remarkGfm from "remark-gfm"
+import { Metadata } from "next"
 
 const postsDirectory = path.join(process.cwd(), "content/posts")
 
@@ -13,6 +14,15 @@ try {
   }
 } catch (error) {
   console.error("Unable to create posts directory:", error)
+}
+
+export interface PostData {
+  id: string
+  title: string
+  date: string
+  contentHtml: string
+  tags?: string[]
+  excerpt?: string
 }
 
 export function getAllPosts() {
@@ -149,5 +159,57 @@ export function getAllTags() {
   return Object.entries(tagCounts)
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count)
+}
+
+export async function generateStaticParams() {
+  const posts = getAllPostIds()
+  return posts.map((post) => ({
+    id: post.params.id,
+  }))
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const resolvedParams = await Promise.resolve(params)
+  const post = await getPostById(resolvedParams.id)
+  
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+    }
+  }
+
+  const description = post.contentHtml.replace(/<[^>]*>/g, '').slice(0, 200)
+  const url = `https://www.jimmy-blog.top/posts/${resolvedParams.id}`
+
+  return {
+    title: post.title,
+    description,
+    keywords: post.tags,
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      publishedTime: post.date,
+      authors: ['Vivek'],
+      tags: post.tags,
+      url,
+      siteName: 'Vivek Blog',
+      locale: 'en',
+      images: [
+        {
+          url: 'https://www.jimmy-blog.top/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: ['https://www.jimmy-blog.top/og-image.png'],
+    },
+  }
 }
 
