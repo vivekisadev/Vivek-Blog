@@ -34,7 +34,7 @@ export default async function Post({ params }: { params: { id: string } }) {
       notFound()
     }
 
-    const postUrl = `https://www.jimmy-blog.top/posts/${id}`
+    const postUrl = `https://blogsbyvivek.vercel.app/posts/${id}`
 
     return (
       <Layout>
