@@ -42,7 +42,6 @@ export function getAllPosts() {
 
         const matterResult = matter(fileContents)
 
-        // 合并数据
         return {
           id,
           title: matterResult.data.title || "No Title",
@@ -53,7 +52,6 @@ export function getAllPosts() {
         }
       })
 
-    // 按日期排序（最新的在前）
     return allPostsData.sort((a, b) => {
       if (new Date(a.date) < new Date(b.date)) {
         return 1
@@ -67,7 +65,6 @@ export function getAllPosts() {
   }
 }
 
-// 获取所有博客文章ID
 export function getAllPostIds() {
   try {
     const fileNames = fs.readdirSync(postsDirectory)
@@ -87,20 +84,16 @@ export function getAllPostIds() {
   }
 }
 
-// 根据ID获取博客文章
 export async function getPostById(id: string) {
   try {
     const fullPath = path.join(postsDirectory, `${id}.md`)
     const fileContents = fs.readFileSync(fullPath, "utf8")
 
-    // 使用gray-matter解析元数据
     const matterResult = matter(fileContents)
 
-    // 使用remark将Markdown转换为HTML
     const processedContent = await remark().use(remarkGfm).use(html).process(matterResult.content)
     const contentHtml = processedContent.toString()
 
-    // 合并数据
     return {
       id,
       title: matterResult.data.title || "No Title",
@@ -115,7 +108,6 @@ export async function getPostById(id: string) {
   }
 }
 
-// 获取按年份分组的博客文章
 export function getPostsByYear() {
   const posts = getAllPosts()
   const postsByYear: Record<string, typeof posts> = {}
@@ -179,7 +171,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 
   const description = post.contentHtml.replace(/<[^>]*>/g, '').slice(0, 200)
-  const url = `https://www.jimmy-blog.top/posts/${resolvedParams.id}`
+  const url = `https://blogsbyvivek.vercel.app/posts/${resolvedParams.id}`
 
   return {
     title: post.title,
@@ -197,7 +189,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       locale: 'en',
       images: [
         {
-          url: 'https://www.jimmy-blog.top/og-image.png',
+          url: 'https://blogsbyvivek.vercel.app/',
           width: 1200,
           height: 630,
           alt: post.title,
@@ -208,7 +200,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: 'summary_large_image',
       title: post.title,
       description,
-      images: ['https://www.jimmy-blog.top/og-image.png'],
+      images: ['https://blogsbyvivek.vercel.app/'],
     },
   }
 }
