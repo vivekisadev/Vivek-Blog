@@ -32,6 +32,11 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
     scrollRestoration: true,
     optimizeServerReact: true,
+    outputFileTracingIncludes: {
+      '/api/**': ['./content/**/*'],
+      '/books/**': ['./content/books/**/*'],
+      '/books': ['./content/books/**/*'],
+    },
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
