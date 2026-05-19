@@ -77,7 +77,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
             <MarkdownContent content={post.contentHtml} />
           </article>
           
-          <div className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-16">
             <Footer />
           </div>
         </div>
