@@ -22,8 +22,12 @@ export interface BookData {
 const BOOKS_DIR = path.join(process.cwd(), "content/books");
 
 function ensureDir() {
-  if (!fs.existsSync(BOOKS_DIR)) {
-    fs.mkdirSync(BOOKS_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(BOOKS_DIR)) {
+      fs.mkdirSync(BOOKS_DIR, { recursive: true });
+    }
+  } catch {
+    // Read-only filesystem (e.g. Vercel) — directory must already exist in the build
   }
 }
 
@@ -42,22 +46,31 @@ function slugify(text: string): string {
 
 export async function getBooks(): Promise<BookData[]> {
   ensureDir();
-  const files = fs.readdirSync(BOOKS_DIR).filter((f) => f.endsWith(".json"));
-  const books: BookData[] = files.map((f) => {
-    const raw = fs.readFileSync(path.join(BOOKS_DIR, f), "utf-8");
-    return JSON.parse(raw);
-  });
-  books.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
-  return books;
+  try {
+    if (!fs.existsSync(BOOKS_DIR)) return [];
+    const files = fs.readdirSync(BOOKS_DIR).filter((f) => f.endsWith(".json"));
+    const books: BookData[] = files.map((f) => {
+      const raw = fs.readFileSync(path.join(BOOKS_DIR, f), "utf-8");
+      return JSON.parse(raw);
+    });
+    books.sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+    return books;
+  } catch {
+    return [];
+  }
 }
 
 export async function getBook(id: string): Promise<BookData | null> {
   ensureDir();
-  const fp = bookPath(id);
-  if (!fs.existsSync(fp)) return null;
-  return JSON.parse(fs.readFileSync(fp, "utf-8"));
+  try {
+    const fp = bookPath(id);
+    if (!fs.existsSync(fp)) return null;
+    return JSON.parse(fs.readFileSync(fp, "utf-8"));
+  } catch {
+    return null;
+  }
 }
 
 // ─── CREATE ──────────────────────────────────────────────────
