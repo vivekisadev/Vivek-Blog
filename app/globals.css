@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-200;
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+.prose {
+  @apply text-zinc-700 dark:text-zinc-300;
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", sans-serif;
+}
+
+.prose p {
+  @apply leading-relaxed my-6 text-base;
+  line-height: 1.75;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.prose a {
+  @apply text-zinc-800 dark:text-zinc-200 font-medium no-underline border-b border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all duration-200;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  @apply font-medium tracking-tight text-zinc-800 dark:text-zinc-200 scroll-m-20;
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", sans-serif;
+  font-weight: 600;
+}
+
+.prose h1 {
+  @apply text-4xl mb-4 mt-12;
+  line-height: 1.4;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0;
+}
+
+.prose h1::after {
+  display: none;
+}
+
+.prose h2 {
+  @apply text-2xl mb-3 mt-10 pb-0;
+  line-height: 1.5;
+}
+
+.prose h3 {
+  @apply text-xl mb-2 mt-8;
+  line-height: 1.6;
+}
+
+.prose h4 {
+  @apply text-lg mb-2 mt-6;
+  line-height: 1.6;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-zinc-300 dark:border-zinc-700 pl-4 py-0 my-6 text-zinc-700 dark:text-zinc-300 italic;
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", sans-serif;
+  line-height: 1.75;
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+.prose ul {
+  @apply list-disc pl-6 my-6 space-y-2;
+}
+
+.prose ol {
+  @apply list-decimal pl-6 my-6 space-y-2;
+}
+
+.prose li {
+  @apply mb-2;
+  line-height: 1.75;
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+.prose code {
+  @apply bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-sm font-mono text-zinc-800 dark:text-zinc-200;
+  font-family: "SF Mono", "SF Mono SC", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.prose pre {
+  @apply bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg overflow-x-auto my-6 text-sm border border-zinc-200 dark:border-zinc-700;
+  font-family: "SF Mono", "SF Mono SC", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-zinc-800 dark:text-zinc-200;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.prose hr {
+  @apply border-zinc-200 dark:border-zinc-800 my-6;
+  position: relative;
+  height: 0.5px;
+  border: none;
+  background-color: rgb(228 228 231);
+}
+
+.dark .prose hr {
+  background-color: rgb(63 63 70);
+}
+
+.prose table {
+  @apply w-full my-6 border-collapse bg-white/50 dark:bg-zinc-900/50 rounded-lg overflow-hidden ring-1 ring-gray-200 dark:ring-zinc-800;
+}
+
+.prose thead {
+  @apply bg-gray-50/80 dark:bg-zinc-800/80 border-b border-gray-200 dark:border-zinc-700;
+}
+
+.prose th {
+  @apply px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider;
+}
+
+.prose td {
+  @apply px-4 py-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200/70 dark:border-zinc-800/70 whitespace-pre-wrap;
+  line-height: 1.8;
+}
+
+.prose tr:hover {
+  @apply bg-gray-50/80 dark:bg-zinc-800/50 transition-all duration-200;
+}
+
+.prose table caption {
+  @apply px-4 py-2 text-sm text-gray-600 dark:text-gray-400 text-left;
+}
+
+/* KaTeX 样式调整 */
+.katex-inline {
+  display: inline-block;
+  padding: 0 0.2em;
+  font-family: "SF Mono", "SF Mono SC", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.katex-block {
+  display: block;
+  margin: 1em 0;
+  padding: 1em;
+  overflow-x: auto;
+  font-family: "SF Mono", "SF Mono SC", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
