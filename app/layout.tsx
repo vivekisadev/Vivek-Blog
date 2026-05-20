@@ -4,6 +4,8 @@ import GoogleAnalytics from "@/components/GoogleAnalytics"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { BackToTop } from "@/components/back-to-top"
+import { NavigationProgress } from "@/components/navigation-progress"
+import { Suspense } from "react"
 import "./globals.css"
 
 const inter = Inter({
@@ -95,6 +97,9 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased`}>
         <ThemeProvider>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           {children}
           {process.env.NEXT_PUBLIC_GA_ID && (
             <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID} />
@@ -107,4 +112,3 @@ export default function RootLayout({
   )
 }
 
-import './globals.css'

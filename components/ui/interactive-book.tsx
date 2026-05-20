@@ -159,7 +159,7 @@ export default function InteractiveBook({
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
+            transition={{ delay: 0.15, duration: 0.2 }}
             onClick={handleCloseBook}
             className="fixed top-6 right-6 z-[1001] p-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md text-white transition-all hover:scale-110 shadow-2xl cursor-pointer"
           >
@@ -204,7 +204,7 @@ export default function InteractiveBook({
                 }
           }
           transition={{
-            duration: 0.7,
+            duration: 0.45,
             ease: [0.32, 0.72, 0, 1],
           }}
         >
@@ -217,8 +217,8 @@ export default function InteractiveBook({
               zIndex: isOpen ? 0 : 100,
             }}
             transition={{
-              rotateY: { duration: 1.2, ease: [0.25, 0, 0, 1] },
-              zIndex: { delay: isOpen ? 0.6 : 0.4 },
+              rotateY: { duration: 0.6, ease: [0.25, 0, 0, 1] },
+              zIndex: { delay: isOpen ? 0.3 : 0.2 },
             }}
             style={{ transformStyle: "preserve-3d" }}
             onClick={!isOpen ? handleOpenBook : undefined}
@@ -285,7 +285,7 @@ export default function InteractiveBook({
                     zIndex: isFlipped ? index + 1 : pages.length - index,
                   }}
                   transition={{
-                    duration: 0.55,
+                    duration: 0.35,
                     ease: [0.645, 0.045, 0.355, 1],
                   }}
                 >
