@@ -47,13 +47,27 @@ async function sendEmail(to: string | string[], subject: string, html: string) {
     return
   }
 
-  const resend = createResendClient()
-  await resend.emails.send({
-    from: resendFrom,
-    to,
-    subject,
-    html,
-  })
+  try {
+    const resend = createResendClient()
+    const result = await resend.emails.send({
+      from: resendFrom,
+      to,
+      subject,
+      html,
+    })
+
+    if (result.error) {
+      console.error('Resend API Error:', result.error)
+      // Throw the error so the calling function knows it failed
+      throw new Error(result.error.message)
+    }
+
+    console.log(`Email sent successfully to ${to}`)
+    return result
+  } catch (error: any) {
+    console.error('Failed to send email through Resend:', error)
+    throw error
+  }
 }
 
 export async function notifySubscribers(type: 'post' | 'note', title?: string, date?: string) {
