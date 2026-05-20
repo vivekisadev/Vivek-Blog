@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && tsx scripts/generate-rss.ts",
+    "generate": "prisma generate",
+    "build": "prisma generate && next build && tsx scripts/generate-rss.ts",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "postbuild": "tsx scripts/preload.ts"
   },
   "dependencies": {
