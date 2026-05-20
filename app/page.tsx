@@ -19,7 +19,7 @@ export const revalidate = 3600
 const PAGE_SIZE = 10
 
 export async function generateStaticParams() {
-  const posts = getAllPostsMeta()
+  const posts = await getAllPostsMeta()
   const totalPages = Math.ceil(posts.length / PAGE_SIZE)
   return Array.from({ length: totalPages }, (_, i) => ({
     page: (i + 1).toString(),
@@ -28,8 +28,8 @@ export async function generateStaticParams() {
 
 async function getInitialData() {
   try {
-    const posts = getAllPostsMeta()
-    const notes = getAllNotesMeta()
+    const posts = await getAllPostsMeta()
+    const notes = await getAllNotesMeta()
     const tags = getTagsFromPosts(posts).map(t => ({ tag: t.tag, count: Number(t.count) }))
     const totalPages = Math.ceil(posts.length / PAGE_SIZE)
     const paginatedPosts = posts.slice(0, PAGE_SIZE)

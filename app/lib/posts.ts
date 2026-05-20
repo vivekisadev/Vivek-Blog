@@ -27,21 +27,17 @@ export interface PostData {
   readingTime?: number
 }
 
-export function getAllPosts() {
+export async function getAllPosts() {
   try {
-    const fileNames = fs.readdirSync(postsDirectory)
+    const fileNames = fs.existsSync(postsDirectory) ? fs.readdirSync(postsDirectory) : []
+    const postMap = new Map<string, any>()
 
-    const allPostsData = fileNames
-      .filter((fileName) => fileName.endsWith(".md")) 
+    const localPosts = fileNames
+      .filter((fileName) => fileName.endsWith(".md"))
       .map((fileName) => {
-       
         const id = fileName.replace(/\.md$/, "")
-
-
         const fullPath = path.join(postsDirectory, fileName)
         const fileContents = fs.readFileSync(fullPath, "utf8")
-
-
         const matterResult = matter(fileContents)
 
         return {
@@ -54,32 +50,54 @@ export function getAllPosts() {
         }
       })
 
-    return allPostsData.sort((a, b) => {
-      if (new Date(a.date) < new Date(b.date)) {
-        return 1
-      } else {
-        return -1
-      }
-    })
+    localPosts.forEach((post) => postMap.set(post.id, post))
+
+    try {
+      const dbPosts = await prisma.post.findMany({ where: { published: true } })
+      dbPosts.forEach((dbPost) => {
+        const id = dbPost.slug || dbPost.id.toString()
+        if (!postMap.has(id)) {
+          postMap.set(id, {
+            id,
+            title: dbPost.title,
+            date: dbPost.createdAt.toISOString(),
+            excerpt: dbPost.content.substring(0, 150) + '...',
+            tags: dbPost.tags || [],
+            content: dbPost.content,
+          })
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching posts from database:', error)
+    }
+
+    const allPostsData = Array.from(postMap.values())
+    return allPostsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   } catch (error) {
     console.error("Obtaining all posts failed:", error)
     return []
   }
 }
 
-export function getAllPostIds() {
+export async function getAllPostIds() {
   try {
-    const fileNames = fs.readdirSync(postsDirectory)
+    const fileNames = fs.existsSync(postsDirectory) ? fs.readdirSync(postsDirectory) : []
+    const ids = new Set<string>()
 
-    return fileNames
+    fileNames
       .filter((fileName) => fileName.endsWith(".md"))
-      .map((fileName) => {
-        return {
-          params: {
-            id: fileName.replace(/\.md$/, ""),
-          },
-        }
+      .forEach((fileName) => ids.add(fileName.replace(/\.md$/, "")))
+
+    try {
+      const dbPosts = await prisma.post.findMany({ where: { published: true } })
+      dbPosts.forEach((dbPost) => {
+        ids.add(dbPost.slug || dbPost.id.toString())
       })
+    } catch (error) {
+      console.error('Error fetching DB post ids:', error)
+    }
+
+    return Array.from(ids).map((id) => ({ params: { id } }))
   } catch (error) {
     console.error("Obtaining all post IDs failed:", error)
     return []
@@ -141,8 +159,8 @@ export async function getPostById(id: string) {
   }
 }
 
-export function getPostsByYear() {
-  const posts = getAllPosts()
+export async function getPostsByYear() {
+  const posts = await getAllPosts()
   const postsByYear: Record<string, typeof posts> = {}
 
   posts.forEach((post) => {
@@ -156,8 +174,8 @@ export function getPostsByYear() {
   return postsByYear
 }
 
-export function getPaginatedPosts(page: number = 1, pageSize: number = 5) {
-  const posts = getAllPosts();
+export async function getPaginatedPosts(page: number = 1, pageSize: number = 5) {
+  const posts = await getAllPosts();
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
   
@@ -169,8 +187,8 @@ export function getPaginatedPosts(page: number = 1, pageSize: number = 5) {
   };
 }
 
-export function getAllTags() {
-  const posts = getAllPosts()
+export async function getAllTags() {
+  const posts = await getAllPosts()
   const tagCounts: Record<string, number> = {}
 
   posts.forEach((post) => {
@@ -187,7 +205,7 @@ export function getAllTags() {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPostIds()
+  const posts = await getAllPostIds()
   return posts.map((post) => ({
     id: post.params.id,
   }))
