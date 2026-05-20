@@ -249,6 +249,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.1.2(@types/react@19.1.2)
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       postcss:
         specifier: ^8
         version: 8.5.3
