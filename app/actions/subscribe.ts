@@ -13,6 +13,11 @@ export async function subscribeUser(formData: FormData) {
 
   if (useDatabase) {
     try {
+      // Basic check for prisma instance
+      if (!prisma) {
+        throw new Error('Database connection is not available');
+      }
+
       const existing = await prisma.subscriber.findUnique({
         where: { email }
       })
@@ -25,11 +30,20 @@ export async function subscribeUser(formData: FormData) {
         data: { email }
       })
 
-      sendWelcomeEmail(email).catch(console.error)
+      // Send welcome email asynchronously
+      sendWelcomeEmail(email).catch(err => {
+        console.error('Failed to send welcome email:', err);
+      })
+
       return { success: true, message: 'Successfully subscribed!' }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error in subscribeUser (DB):', e)
-      return { success: false, message: 'Could not save subscription to database' }
+      return { 
+        success: false, 
+        message: e?.message?.includes('P2021') 
+          ? 'Database table "Subscriber" not found. Please run npx prisma db push.'
+          : 'Could not save subscription to database' 
+      }
     }
   }
 

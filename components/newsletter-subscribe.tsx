@@ -20,7 +20,8 @@ export function NewsletterSubscribe() {
         e.currentTarget.reset()
       }
     } catch (err: any) {
-      setStatus('Something went wrong')
+      console.error('Subscription error:', err)
+      setStatus('Something went wrong. Please try again.')
     }
     setLoading(false)
   }

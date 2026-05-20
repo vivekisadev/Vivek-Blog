@@ -171,7 +171,7 @@ export async function getAllNotesMeta() {
 
     try {
       const dbNotes = await prisma.note.findMany();
-      dbNotes.forEach((dbNote) => {
+      dbNotes.forEach((dbNote: any) => {
         notes.push({
           id: dbNote.id.toString(),
           content: dbNote.content,
