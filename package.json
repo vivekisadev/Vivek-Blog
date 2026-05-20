@@ -79,6 +79,7 @@
     "remark": "latest",
     "remark-gfm": "^4.0.1",
     "remark-html": "latest",
+    "resend": "^6.12.3",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
