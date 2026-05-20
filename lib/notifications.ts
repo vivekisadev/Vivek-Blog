@@ -86,6 +86,8 @@ export async function notifySubscribers(type: 'post' | 'note', title?: string, d
             .footer { padding: 30px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
             .footer p { margin: 5px 0; }
             .brand { font-weight: 700; color: #374151; font-size: 16px; margin-bottom: 15px; display: block; }
+            .social-links-footer { margin: 15px 0; }
+            .social-link-footer { color: #6b7280; text-decoration: none; margin: 0 8px; font-weight: 500; }
           </style>
         </head>
         <body>
@@ -105,8 +107,13 @@ export async function notifySubscribers(type: 'post' | 'note', title?: string, d
               </div>
               <div class="footer">
                 <span class="brand">Vivek's Blog</span>
+                <div class="social-links-footer">
+                  <a href="https://github.com/vivekisadev" class="social-link-footer">GitHub</a>
+                  <a href="https://linkedin.com/in/vivekverma16" class="social-link-footer">LinkedIn</a>
+                  <a href="https://thisisvivek.vercel.app" class="social-link-footer">Website</a>
+                </div>
+                <p>Thanks for subscribing to blogsbyvivek</p>
                 <p>&copy; ${new Date().getFullYear()} Vivek. All rights reserved.</p>
-                <p>You're receiving this because you subscribed to my newsletter.</p>
               </div>
             </div>
           </div>
@@ -133,35 +140,53 @@ export async function sendWelcomeEmail(email: string) {
       <html>
         <head>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; }
-            .header { border-bottom: 2px solid #0070f3; padding-bottom: 10px; margin-bottom: 20px; }
-            .title { font-size: 24px; font-weight: bold; color: #0070f3; margin: 0; }
-            .content { margin-bottom: 30px; }
-            .button { display: inline-block; padding: 12px 24px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
-            .footer { margin-top: 40px; font-size: 12px; color: #999; text-align: center; border-top: 1px solid #eaeaea; padding-top: 20px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .wrapper { background-color: #f4f7f6; padding: 40px 20px; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+            .header { background: linear-gradient(135deg, #0070f3, #00a3ff); padding: 40px 30px; text-align: center; color: white; }
+            .title { font-size: 28px; font-weight: 800; margin: 0; line-height: 1.2; }
+            .body { padding: 40px 30px; text-align: center; }
+            .message { font-size: 16px; color: #4b5563; margin-bottom: 30px; }
+            .button { display: inline-block; padding: 16px 32px; background-color: #0070f3; color: white !important; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; }
+            .footer { padding: 30px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
+            .footer p { margin: 5px 0; }
+            .brand { font-weight: 700; color: #374151; font-size: 16px; margin-bottom: 15px; display: block; }
+            .social-links-footer { margin: 15px 0; }
+            .social-link-footer { color: #6b7280; text-decoration: none; margin: 0 8px; font-weight: 500; }
           </style>
         </head>
         <body>
-          <div class="container">
-            <div class="header">
-              <h1 class="title">Thanks for subscribing!</h1>
-            </div>
-            <div class="content">
-              <p>You're now subscribed and will receive updates whenever I publish a new post or note.</p>
-              <p>Stay tuned — the next update will be sent to this address.</p>
-              <a href="${appUrl}" class="button">Visit the blog</a>
-            </div>
-            <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} My Blog. All rights reserved.</p>
+          <div class="wrapper">
+            <div class="container">
+              <div class="header">
+                <h1 class="title">Welcome to the Newsletter!</h1>
+              </div>
+              <div class="body">
+                <p class="message">
+                  Thanks for subscribing! You're now on the list to receive updates whenever I publish a new article or daily note.
+                </p>
+                <a href="${appUrl}" class="button">Visit the Blog</a>
+              </div>
+              <div class="footer">
+                <span class="brand">Vivek's Blog</span>
+                <div class="social-links-footer">
+                  <a href="https://github.com/vivekisadev" class="social-link-footer">GitHub</a>
+                  <a href="https://linkedin.com/in/vivekverma16" class="social-link-footer">LinkedIn</a>
+                  <a href="https://thisisvivek.vercel.app" class="social-link-footer">Website</a>
+                </div>
+                <p>Thanks for subscribing to blogsbyvivek</p>
+                <p>&copy; ${new Date().getFullYear()} Vivek. All rights reserved.</p>
+              </div>
             </div>
           </div>
         </body>
       </html>
     `
 
-    await sendEmail(email, 'Welcome to the blog newsletter!', html)
+    await sendEmail(email, 'Welcome to Vivek\'s Blog Newsletter!', html)
   } catch (error) {
     console.error('Failed to send welcome email:', error)
+    // Don't rethrow the error, we want the subscription to be considered successful
+    // even if the welcome email fails to send (e.g. due to Resend sandboxing).
   }
 }
