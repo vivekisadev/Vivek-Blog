@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma'
 
 const resendApiKey = process.env.RESEND_API_KEY || process.env.resend_api_key
 const resendFrom = process.env.RESEND_FROM_EMAIL || 'Blog Updates <onboarding@resend.dev>'
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://yourblog.com'
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://blogsbyvivek.vercel.app'
 
 export const useDatabase = Boolean(process.env.DATABASE_URL)
 
@@ -23,7 +23,7 @@ async function readLocalSubscriberEmails(): Promise<string[]> {
 export async function getSubscriberEmails(): Promise<string[]> {
   if (useDatabase) {
     try {
-      const subscribers = await prisma.Subscriber.findMany({ select: { email: true } })
+      const subscribers = await prisma.subscriber.findMany({ select: { email: true } })
       return subscribers.map(({ email }: { email: string }) => email.trim().toLowerCase())
     } catch (error) {
       console.error('Failed to read subscribers from database:', error)
