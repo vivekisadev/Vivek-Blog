@@ -1,6 +1,8 @@
 allowBuilds:
-  esbuild: set this to true or false
-  sharp: set this to true or false
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  sharp: true
 minimumReleaseAgeExclude:
   - framer-motion@12.39.0
   - motion-dom@12.39.0
