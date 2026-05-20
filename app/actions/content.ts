@@ -6,6 +6,33 @@ import { remark } from 'remark'
 import html from 'remark-html'
 import remarkGfm from 'remark-gfm'
 
+function getTitleInitials(title: string) {
+  const initials = title
+    .trim()
+    .split(/\s+/)
+    .map(word => word.replace(/[^A-Za-z0-9]/g, ''))
+    .filter(Boolean)
+    .map(word => word[0].toUpperCase())
+    .join('')
+
+  return initials || title.toLowerCase().replace(/[^a-z0-9]+/g, '_')
+}
+
+async function ensureUniqueFilename(directory: string, baseName: string) {
+  let filename = `${baseName}.md`
+  let count = 1
+
+  while (true) {
+    try {
+      await fs.access(path.join(directory, filename))
+      filename = `${baseName}_${count}`.concat('.md')
+      count += 1
+    } catch {
+      return filename
+    }
+  }
+}
+
 export async function createContent(formData: FormData) {
   try {
     const type = formData.get('type') as 'post' | 'note'
@@ -21,7 +48,8 @@ export async function createContent(formData: FormData) {
       const title = formData.get('title') as string
       const tagsStr = formData.get('tags') as string
       const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()) : []
-      const filename = `${date}_${title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.md`
+      const initials = getTitleInitials(title)
+      const filename = await ensureUniqueFilename(postsDir, `${date}_${initials}`)
       
       let md = `---\n`
       md += `title: "${title.replace(/"/g, '\\"')}"\n`
@@ -58,6 +86,14 @@ export async function createContent(formData: FormData) {
     return { success: false, message: 'Invalid type' }
   } catch (error: any) {
     console.error('Error in createContent:', error)
+
+    if (error?.code === 'EROFS' || /read-only file system/i.test(error?.message)) {
+      return {
+        success: false,
+        message: 'Unable to save post because the server file system is read-only. Create posts locally or use a writable backend/storage service.',
+      }
+    }
+
     return { success: false, message: error.message || 'Unknown server error' }
   }
 }

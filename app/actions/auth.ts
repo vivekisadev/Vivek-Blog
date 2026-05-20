@@ -6,9 +6,9 @@ export async function verifyAdminPassword(
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminPassword) {
-    // If no password is set, deny access
     return { success: false };
   }
 
-  return { success: password === adminPassword };
+  // Trim both strings to handle whitespace issues
+  return { success: password.trim() === adminPassword.trim() };
 }
