@@ -5,6 +5,7 @@ import { remark } from "remark"
 import html from "remark-html"
 import remarkGfm from "remark-gfm"
 import { Metadata } from "next"
+import prisma from "@/lib/prisma"
 
 const postsDirectory = path.join(process.cwd(), "content/posts")
 
@@ -87,24 +88,53 @@ export function getAllPostIds() {
 
 export async function getPostById(id: string) {
   try {
+    // 1. Try local file system
     const fullPath = path.join(postsDirectory, `${id}.md`)
-    const fileContents = fs.readFileSync(fullPath, "utf8")
+    if (fs.existsSync(fullPath)) {
+      const fileContents = fs.readFileSync(fullPath, "utf8")
+      const matterResult = matter(fileContents)
 
-    const matterResult = matter(fileContents)
+      const processedContent = await remark().use(remarkGfm).use(html, { sanitize: false }).process(matterResult.content)
+      const contentHtml = processedContent.toString()
 
-    const processedContent = await remark().use(remarkGfm).use(html, { sanitize: false }).process(matterResult.content)
-    const contentHtml = processedContent.toString()
+      return {
+        id,
+        title: matterResult.data.title || "No Title",
+        date: matterResult.data.date || new Date().toISOString(),
+        contentHtml,
+        tags: matterResult.data.tags || [],
+        excerpt: matterResult.data.excerpt || "",
+        readingTime: Math.max(1, Math.ceil(matterResult.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)),
+        ...matterResult.data,
+      } as PostData
+    }
 
-    return {
-      id,
-      title: matterResult.data.title || "No Title",
-      date: matterResult.data.date || new Date().toISOString(),
-      contentHtml,
-      tags: matterResult.data.tags || [],
-      excerpt: matterResult.data.excerpt || "",
-      readingTime: Math.max(1, Math.ceil(matterResult.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)),
-      ...matterResult.data,
-    } as PostData
+    // 2. Try database
+    const dbPost = await prisma.post.findFirst({
+      where: {
+        OR: [
+          { slug: id },
+          { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
+        ]
+      }
+    })
+
+    if (dbPost) {
+      const processedContent = await remark().use(remarkGfm).use(html, { sanitize: false }).process(dbPost.content)
+      const contentHtml = processedContent.toString()
+
+      return {
+        id: dbPost.slug || dbPost.id.toString(),
+        title: dbPost.title,
+        date: dbPost.createdAt.toISOString(),
+        contentHtml,
+        tags: dbPost.tags || [],
+        excerpt: dbPost.content.substring(0, 150) + '...',
+        readingTime: Math.max(1, Math.ceil(dbPost.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)),
+      } as PostData
+    }
+
+    return null
   } catch (error) {
     console.error(`Getting blog posts ${id} failure:`, error)
     return null

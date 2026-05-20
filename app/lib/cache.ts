@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import prisma from "@/lib/prisma"
 
 const postsDirectory = path.join(process.cwd(), "content/posts")
 
@@ -21,12 +22,18 @@ export async function initCache() {
   if (cache) return cache
 
   try {
-    const fileNames = await fs.promises.readdir(postsDirectory)
     const posts: any[] = []
     const tagCounts: Record<string, number> = {}
     const postsByYear: Record<string, any[]> = {}
 
-    // 使用 Promise.all 并行处理文件读取
+    // 1. Read from local files
+    let fileNames: string[] = []
+    try {
+      fileNames = await fs.promises.readdir(postsDirectory)
+    } catch (e) {
+      console.warn('Posts directory not found or inaccessible, skipping local files')
+    }
+
     await Promise.all(
       fileNames
         .filter((fileName) => fileName.endsWith(".md"))
@@ -45,20 +52,44 @@ export async function initCache() {
           }
 
           posts.push(post)
-
-          // 统计标签
-          post.tags.forEach((tag: string) => {
-            tagCounts[tag] = (tagCounts[tag] || 0) + 1
-          })
-
-          // 按年份分组
-          const year = new Date(post.date).getFullYear().toString()
-          if (!postsByYear[year]) {
-            postsByYear[year] = []
-          }
-          postsByYear[year].push(post)
         })
     )
+
+    // 2. Read from Database (Prisma)
+    try {
+      const dbPosts = await prisma.post.findMany({
+        where: { published: true }
+      })
+
+      dbPosts.forEach(dbPost => {
+        const post = {
+          id: dbPost.slug || dbPost.id.toString(),
+          title: dbPost.title,
+          date: dbPost.createdAt.toISOString(),
+          excerpt: dbPost.content.substring(0, 150) + '...',
+          tags: dbPost.tags || [],
+          isFromDb: true
+        }
+        posts.push(post)
+      })
+    } catch (e) {
+      console.error('Error fetching posts from database:', e)
+    }
+
+    // Process all posts (stats, grouping, sorting)
+    posts.forEach(post => {
+      // 统计标签
+      post.tags.forEach((tag: string) => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1
+      })
+
+      // 按年份分组
+      const year = new Date(post.date).getFullYear().toString()
+      if (!postsByYear[year]) {
+        postsByYear[year] = []
+      }
+      postsByYear[year].push(post)
+    })
 
     // 按日期排序
     posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

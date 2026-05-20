@@ -7,6 +7,7 @@ import { remark } from "remark"
 import html from "remark-html"
 import remarkGfm from "remark-gfm"
 import { Note } from "@/types/note"
+import prisma from "@/lib/prisma"
 
 let notesCache: {
   notes: Note[];
@@ -21,37 +22,60 @@ async function initNotesCache() {
   }
 
   const notesDirectory = path.join(process.cwd(), "content/notes")
-  
-  if (!fs.existsSync(notesDirectory)) {
-    fs.mkdirSync(notesDirectory, { recursive: true })
-    notesCache = { notes: [], lastUpdated: Date.now() }
-    return []
+  const allNotes: Note[] = []
+
+  // 1. Read from local files
+  if (fs.existsSync(notesDirectory)) {
+    const fileNames = fs.readdirSync(notesDirectory)
+
+    const fileNotes = await Promise.all(
+      fileNames
+        .filter((fileName) => fileName.endsWith(".md"))
+        .map(async (fileName) => {
+          const fullPath = path.join(notesDirectory, fileName)
+          const fileContents = fs.readFileSync(fullPath, "utf8")
+          const matterResult = matter(fileContents)
+          
+          const id = fileName.replace(/\.md$/, "")
+
+          const processedContent = await remark()
+            .use(remarkGfm)
+            .use(html, { sanitize: false })
+            .process(matterResult.content)
+
+          return {
+            id,
+            content: processedContent.toString(),
+            date: matterResult.data.date || new Date().toISOString(),
+          }
+        })
+    )
+    allNotes.push(...fileNotes)
   }
 
-  const fileNames = fs.readdirSync(notesDirectory)
+  // 2. Read from Database (Prisma)
+  try {
+    const dbNotes = await prisma.note.findMany()
 
-  const allNotes = await Promise.all(
-    fileNames
-      .filter((fileName) => fileName.endsWith(".md"))
-      .map(async (fileName) => {
-        const fullPath = path.join(notesDirectory, fileName)
-        const fileContents = fs.readFileSync(fullPath, "utf8")
-        const matterResult = matter(fileContents)
-        
-        const id = fileName.replace(/\.md$/, "")
-
+    const dbNotesProcessed = await Promise.all(
+      dbNotes.map(async (dbNote: any) => {
         const processedContent = await remark()
           .use(remarkGfm)
           .use(html, { sanitize: false })
-          .process(matterResult.content)
+          .process(dbNote.content)
 
         return {
-          id,
+          id: dbNote.id.toString(),
           content: processedContent.toString(),
-          date: matterResult.data.date || new Date().toISOString(),
+          date: dbNote.createdAt.toISOString(),
+          isFromDb: true
         }
       })
-  )
+    )
+    allNotes.push(...dbNotesProcessed)
+  } catch (e) {
+    console.error('Error fetching notes from database:', e)
+  }
   
   allNotes.sort((a, b) => (new Date(a.date) < new Date(b.date) ? 1 : -1))
 

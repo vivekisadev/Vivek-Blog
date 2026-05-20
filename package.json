@@ -12,6 +12,7 @@
   "dependencies": {
     "@giscus/react": "^3.1.0",
     "@hookform/resolvers": "^3.9.1",
+    "@prisma/adapter-pg": "^7.8.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "@radix-ui/react-aspect-ratio": "^1.1.1",
@@ -61,6 +62,7 @@
     "next": "^15.5.18",
     "next-themes": "latest",
     "path": "latest",
+    "pg": "^8.21.0",
     "react": "^19",
     "react-day-picker": "8.10.1",
     "react-dom": "^19",
@@ -86,6 +88,7 @@
   "devDependencies": {
     "@prisma/client": "^7.8.0",
     "@types/node": "^22",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "postcss": "^8",
@@ -93,19 +96,5 @@
     "tailwindcss": "^3.4.17",
     "tsx": "^4.7.1",
     "typescript": "^5"
-  },
-  "onlyBuiltDependencies": [
-    "@prisma/engines",
-    "esbuild",
-    "prisma",
-    "sharp"
-  ],
-  "pnpm": {
-    "minimumReleaseAgeExclude": [
-      "framer-motion@12.39.0",
-      "motion-dom@12.39.0",
-      "motion-utils@12.39.0",
-      "motion@12.39.0"
-    ]
   }
 }
