@@ -5,8 +5,8 @@ import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { getAllPosts } from "@/app/lib/posts"
 
-export const dynamic = 'force-static'
-export const revalidate = false 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 
 
 export async function generateStaticParams() {
   const { totalPages } = await getPaginatedNotesAction(1, 7)

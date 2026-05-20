@@ -14,7 +14,7 @@ let notesCache: {
   lastUpdated: number;
 } | null = null;
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000 
+const CACHE_DURATION = 0 // Disable cache for immediate updates
 
 async function initNotesCache() {
   if (notesCache && Date.now() - notesCache.lastUpdated < CACHE_DURATION) {
