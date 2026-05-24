@@ -131,7 +131,7 @@ export async function getAllPostsMeta() {
     const posts = Array.from(postMap.values())
     posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     return posts
-  }, 0); // Set TTL to 0 for immediate updates
+  }, 60000); // 1 minute TTL instead of 0
 }
 
 export function getTagsFromPosts(posts: any[]) {
@@ -170,20 +170,22 @@ export async function getAllNotesMeta() {
     }
 
     try {
-      const dbNotes = await prisma.note.findMany();
-      dbNotes.forEach((dbNote: any) => {
-        notes.push({
-          id: dbNote.id.toString(),
-          content: dbNote.content,
-          date: dbNote.createdAt.toISOString(),
-          isFromDb: true,
+      const dbNotes = await (prisma as any).note?.findMany?.();
+      if (Array.isArray(dbNotes)) {
+        dbNotes.forEach((dbNote: any) => {
+          notes.push({
+            id: dbNote.id.toString(),
+            content: dbNote.content,
+            date: dbNote.createdAt.toISOString(),
+            isFromDb: true,
+          });
         });
-      });
+      }
     } catch (error) {
       console.error('Error fetching notes from database:', error);
     }
 
     notes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     return notes;
-  }, 0); // Set TTL to 0 for immediate updates
+  }, 60000); // 1 minute TTL instead of 0
 }

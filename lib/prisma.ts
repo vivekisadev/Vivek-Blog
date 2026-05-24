@@ -6,7 +6,10 @@ declare global {
   var prisma: undefined | PrismaClient
 }
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+})
 const adapter = new PrismaPg(pool)
 const prisma = globalThis.prisma ?? new PrismaClient({ adapter })
 

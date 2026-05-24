@@ -11,10 +11,17 @@ import { Label } from '@/components/ui/label'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Layout } from '@/components/layout'
-import { FileText, StickyNote, Send, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Code, List } from 'lucide-react'
+import { FileText, StickyNote, Send, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Code, List, Video, Globe, MonitorPlay } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AdminGate } from '@/components/admin-gate'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 export default function CreateContent() {
   const [type, setType] = useState<'post' | 'note'>('post')
@@ -24,6 +31,12 @@ export default function CreateContent() {
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const tagsInputRef = useRef<HTMLInputElement>(null)
+
+  // Media embed dialog state
+  const [embedDialogOpen, setEmbedDialogOpen] = useState(false)
+  const [embedType, setEmbedType] = useState<'video' | 'iframe' | 'image'>('video')
+  const [embedUrl, setEmbedUrl] = useState('')
+  const [embedSelection, setEmbedSelection] = useState('')
 
   const handlePreviewToggle = async () => {
     if (!isPreview) {
@@ -92,6 +105,58 @@ export default function CreateContent() {
     textarea.value = `${before}${prefix}${selected || (suffix ? 'text' : '')}${suffix}${after}`
     textarea.focus()
     textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selected ? selected.length : (suffix ? 4 : 0)))
+  }
+
+  const openEmbedDialog = (mediaType: 'video' | 'iframe' | 'image') => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selected = textarea.value.substring(start, end)
+
+    setEmbedType(mediaType)
+    setEmbedSelection(selected || '')
+    setEmbedUrl('')
+    setEmbedDialogOpen(true)
+  }
+
+  const handleEmbedInsert = () => {
+    if (!embedUrl.trim()) {
+      toast.error('Please enter a URL')
+      return
+    }
+
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const label = embedSelection.trim() || (
+      embedType === 'video' ? 'Watch video' : 
+      embedType === 'iframe' ? 'Open simulation' : 
+      'View image'
+    )
+
+    const emoji = embedType === 'video' ? '🎬' : embedType === 'iframe' ? '🌐' : '🖼️'
+
+    const embedHtml = `\n<div class="media-popup" data-type="${embedType}" data-src="${embedUrl.trim()}" data-title="${label}">${emoji} ${label}</div>\n`
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const text = textarea.value
+    const before = text.substring(0, start)
+    const after = text.substring(end)
+
+    textarea.value = `${before}${embedHtml}${after}`
+    textarea.focus()
+
+    const newCursorPos = start + embedHtml.length
+    textarea.setSelectionRange(newCursorPos, newCursorPos)
+
+    setEmbedDialogOpen(false)
+    setEmbedUrl('')
+    setEmbedSelection('')
+    saveDraft()
+    toast.success(`${embedType === 'video' ? 'Video' : embedType === 'iframe' ? 'Embed' : 'Image'} added!`)
   }
 
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -175,6 +240,29 @@ export default function CreateContent() {
       setLoading(false)
     }
   }
+
+  const embedTypeConfig = {
+    video: {
+      title: 'Embed Video',
+      placeholder: 'https://www.youtube.com/watch?v=... or embed URL',
+      hint: 'Paste a YouTube, Vimeo, or any video embed URL',
+      icon: '🎬',
+    },
+    iframe: {
+      title: 'Embed Link / Simulation',
+      placeholder: 'https://example.com/simulation',
+      hint: 'Paste any URL to embed as an interactive popup',
+      icon: '🌐',
+    },
+    image: {
+      title: 'Embed Image Popup',
+      placeholder: 'https://example.com/image.png',
+      hint: 'Paste an image URL to show in a popup overlay',
+      icon: '🖼️',
+    },
+  }
+
+  const currentEmbedConfig = embedTypeConfig[embedType]
 
   return (
     <AdminGate>
@@ -350,6 +438,33 @@ export default function CreateContent() {
                       <button type="button" onClick={() => insertMarkdown('\n```\n', '\n```\n')} className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-600 dark:text-zinc-300" title="Code Block">
                         <Code className="w-4 h-4" />
                       </button>
+
+                      {/* ─── Media Embed Buttons ─── */}
+                      <div className="w-px h-4 bg-zinc-300 dark:bg-zinc-700 mx-1" />
+                      <button 
+                        type="button" 
+                        onClick={() => openEmbedDialog('video')} 
+                        className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded text-zinc-600 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" 
+                        title="Embed Video"
+                      >
+                        <Video className="w-4 h-4" />
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => openEmbedDialog('iframe')} 
+                        className="p-1.5 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded text-zinc-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors" 
+                        title="Embed Link / Simulation"
+                      >
+                        <Globe className="w-4 h-4" />
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => openEmbedDialog('image')} 
+                        className="p-1.5 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded text-zinc-600 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" 
+                        title="Embed Image Popup"
+                      >
+                        <MonitorPlay className="w-4 h-4" />
+                      </button>
                     </div>
                     )}
                   </div>
@@ -398,6 +513,68 @@ export default function CreateContent() {
         
         <Footer />
       </div>
+
+      {/* ─── Media Embed URL Prompt Dialog ─── */}
+      <Dialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
+              <span className="text-lg">{currentEmbedConfig.icon}</span>
+              {currentEmbedConfig.title}
+            </DialogTitle>
+            <DialogDescription className="text-zinc-500 dark:text-zinc-400">
+              {currentEmbedConfig.hint}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-2">
+            {embedSelection && (
+              <div className="text-sm">
+                <span className="text-zinc-500 dark:text-zinc-400">Selected text: </span>
+                <span className="font-medium text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">
+                  {embedSelection}
+                </span>
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="embed-url" className="text-zinc-700 dark:text-zinc-300 text-sm">URL</Label>
+              <Input
+                id="embed-url"
+                value={embedUrl}
+                onChange={(e) => setEmbedUrl(e.target.value)}
+                placeholder={currentEmbedConfig.placeholder}
+                className="bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 focus-visible:ring-1 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-600"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleEmbedInsert()
+                  }
+                }}
+                autoFocus
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEmbedDialogOpen(false)}
+                className="border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleEmbedInsert}
+                className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900"
+              >
+                Insert
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
     </AdminGate>
   )

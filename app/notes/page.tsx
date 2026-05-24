@@ -5,8 +5,7 @@ import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { getAllPosts } from "@/app/lib/posts"
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0 
+export const revalidate = 60 // Revalidate every 60 seconds (ISR)
 
 export async function generateStaticParams() {
   const { totalPages } = await getPaginatedNotesAction(1, 7)

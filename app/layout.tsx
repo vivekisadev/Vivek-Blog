@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { BackToTop } from "@/components/back-to-top"
 import { NavigationProgress } from "@/components/navigation-progress"
 import { Suspense } from "react"
+import { MediaPopupProvider } from "@/components/media-popup-provider"
 import "./globals.css"
 
 const inter = Inter({
@@ -101,6 +102,7 @@ export default function RootLayout({
             <NavigationProgress />
           </Suspense>
           {children}
+          <MediaPopupProvider />
           {process.env.NEXT_PUBLIC_GA_ID && (
             <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID} />
           )}

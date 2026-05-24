@@ -1,13 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
+import { createRoot, Root } from "react-dom/client"
 import katex from 'katex'
+// @ts-ignore: Allow importing CSS file without type declarations
 import 'katex/dist/katex.min.css'
 import mediumZoom from 'medium-zoom'
 import type { MarkdownContentProps } from '@/types/markdown'
 import { ScrollReveal } from '@/components/scroll-reveal'
+import { MediaPopup } from '@/components/media-popup'
 
 export function MarkdownContent({ content }: MarkdownContentProps) {
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const renderMath = (tex: string, displayMode: boolean): string => {
     try {
@@ -34,6 +38,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
   }
 
   useEffect(() => {
+    // Code block copy buttons
     const codeBlocks = document.querySelectorAll('pre')
     
     codeBlocks.forEach((pre) => {
@@ -75,12 +80,64 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       wrapper.appendChild(pre)
       wrapper.appendChild(buttonContainer)
     })
-    
-    const zoom = mediumZoom('.prose img', {
+
+    // 1. Zoom handles standard images
+    if (!contentRef.current) return
+    const zoom = mediumZoom(contentRef.current.querySelectorAll('img:not(.media-popup-trigger img)'), {
       margin: 24,
-      background: 'rgba(9, 9, 11, 0.9)', // zinc-950 equivalent
+      background: 'rgba(9, 9, 11, 0.9)',
     })
-    
+
+    // 2. Hydrate media popups
+    const mediaPopups = contentRef.current.querySelectorAll('.media-popup')
+    mediaPopups.forEach((el) => {
+      const element = el as HTMLElement
+      const type = (element.dataset.type || 'iframe') as "video" | "iframe" | "image"
+      const src = element.dataset.src || ''
+      const title = element.dataset.title || element.textContent || 'Media'
+
+      if (element.dataset.hydrated === 'true') return
+      element.dataset.hydrated = 'true'
+
+      element.className = 'media-popup-trigger'
+      element.setAttribute('role', 'button')
+      element.setAttribute('tabindex', '0')
+      element.style.cursor = 'pointer'
+
+      const iconSvg =
+        type === 'video'
+          ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="media-popup-icon media-popup-icon--video"><polygon points="6 3 20 12 6 21 6 3"/></svg>'
+          : type === 'image'
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="media-popup-icon media-popup-icon--image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="media-popup-icon media-popup-icon--iframe"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>'
+
+      const originalText = element.textContent || title
+      element.innerHTML = `
+        <span class="media-popup-trigger__icon">${iconSvg}</span>
+        <span class="media-popup-trigger__content">
+          <span class="media-popup-trigger__label">${originalText}</span>
+          <span class="media-popup-trigger__hint">Click to open</span>
+        </span>
+        <span class="media-popup-trigger__arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+        </span>
+      `
+
+      const openPopup = () => {
+        if ((window as any).__openMediaPopup) {
+          (window as any).__openMediaPopup(type, src, title)
+        }
+      }
+
+      element.addEventListener('click', openPopup)
+      element.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+          e.preventDefault()
+          openPopup()
+        }
+      })
+    })
+
     return () => {
       zoom.detach()
       const wrappers = document.querySelectorAll('div.relative.mb-6.group')
