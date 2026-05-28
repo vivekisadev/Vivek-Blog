@@ -2,8 +2,10 @@ import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
 import { remark } from "remark"
-import html from "remark-html"
 import remarkGfm from "remark-gfm"
+import remarkRehype from "remark-rehype"
+import rehypeRaw from "rehype-raw"
+import rehypeStringify from "rehype-stringify"
 import { Metadata } from "next"
 import prisma from "@/lib/prisma"
 
@@ -112,7 +114,12 @@ export async function getPostById(id: string) {
       const fileContents = fs.readFileSync(fullPath, "utf8")
       const matterResult = matter(fileContents)
 
-      const processedContent = await remark().use(remarkGfm).use(html, { sanitize: false }).process(matterResult.content)
+      const processedContent = await remark()
+        .use(remarkGfm)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        .use(rehypeStringify)
+        .process(matterResult.content)
       const contentHtml = processedContent.toString()
 
       return {
@@ -138,7 +145,12 @@ export async function getPostById(id: string) {
     })
 
     if (dbPost) {
-      const processedContent = await remark().use(remarkGfm).use(html, { sanitize: false }).process(dbPost.content)
+      const processedContent = await remark()
+        .use(remarkGfm)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        .use(rehypeStringify)
+        .process(dbPost.content)
       const contentHtml = processedContent.toString()
 
       return {

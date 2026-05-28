@@ -45,7 +45,7 @@ const TextReveal = ({
               className="inline-block"
               style={{
                 filter: filter ? "blur(8px)" : "none",
-                marginRight: "0.25rem",
+                marginRight: "0.25em",
                 opacity: 0,
               }}
             >

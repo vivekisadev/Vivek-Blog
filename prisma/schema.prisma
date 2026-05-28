@@ -35,3 +35,8 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+model ViewCount {
+  slug  String @id
+  count Int    @default(0)
+}

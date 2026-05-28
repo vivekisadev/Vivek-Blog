@@ -11,6 +11,7 @@ import { LikeShareButtons } from "@/components/like-share-buttons"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { Clock, Calendar } from "lucide-react"
 import TextReveal from '@/components/forgeui/text-reveal'
+import { ViewCounter } from "@/components/view-counter"
 
 
 export const dynamic = 'force-static'
@@ -63,6 +64,8 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                   <Clock className="w-4 h-4" />
                   <span>{readingTime} min read</span>
                 </div>
+                <span>•</span>
+                <ViewCounter slug={id} />
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex flex-col items-center gap-6 mt-6">

@@ -138,6 +138,28 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       })
     })
 
+    // 3. Intercept standard anchor tags to open external links in media popup
+    const links = contentRef.current.querySelectorAll('a:not(.media-popup-trigger)')
+    links.forEach((a) => {
+      const href = a.getAttribute('href')
+      if (!href) return
+      
+      // Only intercept external links
+      if (href.startsWith('http') && !href.includes(window.location.host)) {
+        a.addEventListener('click', (e) => {
+          e.preventDefault()
+          
+          let type: "video" | "iframe" | "image" = "iframe"
+          if (href.includes('youtube.com') || href.includes('youtu.be')) type = "video"
+          else if (href.match(/\.(jpeg|jpg|gif|png)$/i)) type = "image"
+          
+          if ((window as any).__openMediaPopup) {
+            (window as any).__openMediaPopup(type, href, a.textContent || 'Link')
+          }
+        })
+      }
+    })
+
     return () => {
       zoom.detach()
       const wrappers = document.querySelectorAll('div.relative.mb-6.group')
