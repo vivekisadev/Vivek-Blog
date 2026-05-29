@@ -158,7 +158,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
   return (
     <ScrollReveal yOffset={30} delay={0.2}>
       <div 
-        className="prose prose-zinc dark:prose-invert prose-sm max-w-none dark:text-zinc-200 prose-img:rounded-xl prose-img:shadow-md prose-img:cursor-zoom-in prose-a:text-blue-500 hover:prose-a:text-blue-600 transition-colors"
+        className="prose prose-zinc dark:prose-invert prose-sm max-w-none w-full break-words dark:text-zinc-200 prose-img:rounded-xl prose-img:shadow-md prose-img:cursor-zoom-in prose-a:text-blue-500 hover:prose-a:text-blue-600 transition-colors"
         dangerouslySetInnerHTML={{ __html: processContent(content) }}
       />
     </ScrollReveal>

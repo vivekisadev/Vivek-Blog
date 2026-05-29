@@ -32,7 +32,7 @@ export function Header() {
           priority={true}
         />
         <h1 
-          className="text-xl font-medium tracking-tight group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors whitespace-nowrap shrink-0"
+          className="hidden sm:block text-xl font-medium tracking-tight group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors whitespace-nowrap shrink-0"
         >
           Vivek's Blog
         </h1>

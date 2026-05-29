@@ -52,7 +52,7 @@ export function HeaderNav() {
 
   const iconClasses = (path: string) => {
     const active = isActive(path)
-    return `h-4 w-4 mr-2 ${
+    return `h-5 w-5 sm:h-4 sm:w-4 sm:mr-2 ${
       active 
         ? 'text-zinc-800 dark:text-zinc-300' 
         : 'text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-zinc-300'
@@ -60,34 +60,38 @@ export function HeaderNav() {
   }
 
   return (
-    <nav className="flex items-center gap-4 sm:gap-6 text-sm whitespace-nowrap">
+    <nav className="flex items-center gap-6 sm:gap-6 text-sm whitespace-nowrap">
       <Link 
         href="/notes" 
         className={linkClasses('/notes')}
+        title="My Logs"
       >
         <Pencil className={iconClasses('/notes')} />
-        <span>My Logs</span>
+        <span className="hidden sm:inline">My Logs</span>
       </Link>
       <Link 
         href="/archive" 
         className={linkClasses('/archive')}
+        title="Archive"
       >
         <Archive className={iconClasses('/archive')} />
-        <span>Archive</span>
+        <span className="hidden sm:inline">Archive</span>
       </Link>
       <Link 
         href="/books" 
         className={linkClasses('/books')}
+        title="Library"
       >
         <Book className={iconClasses('/books')} />
-        <span>Library</span>
+        <span className="hidden sm:inline">Library</span>
       </Link>
       <Link 
         href="/about" 
         className={linkClasses('/about')}
+        title="About"
       >
         <User className={iconClasses('/about')} />
-        <span>About</span>
+        <span className="hidden sm:inline">About</span>
       </Link>
       <ThemeToggleButton />
     </nav>
