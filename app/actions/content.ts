@@ -50,7 +50,7 @@ export async function createContent(formData: FormData) {
     if (type === 'post') {
       const title = formData.get('title') as string
       const tagsStr = formData.get('tags') as string
-      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()) : []
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : []
       const initials = getTitleInitials(title)
       const slug = `${date}_${initials}`.toLowerCase().replace(/[^a-z0-9]+/g, '_')
 
@@ -223,7 +223,7 @@ export async function updateContent(formData: FormData) {
     if (type === 'post') {
       const title = formData.get('title') as string
       const tagsStr = formData.get('tags') as string
-      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()) : []
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : []
 
       // Try update DB
       const dbPost = await prisma.post.findFirst({

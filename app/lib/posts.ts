@@ -223,7 +223,10 @@ export async function getAllTags() {
   posts.forEach((post) => {
     if (post.tags) {
       post.tags.forEach((tag: string | number) => {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1
+        const tagStr = String(tag).trim()
+        if (tagStr) {
+          tagCounts[tagStr] = (tagCounts[tagStr] || 0) + 1
+        }
       })
     }
   })
