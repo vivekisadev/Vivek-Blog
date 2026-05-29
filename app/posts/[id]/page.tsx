@@ -65,7 +65,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                   <span>{readingTime} min read</span>
                 </div>
                 <span>•</span>
-                <ViewCounter slug={id} />
+                <ViewCounter slug={id} increment={true} />
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex flex-col items-center gap-6 mt-6">

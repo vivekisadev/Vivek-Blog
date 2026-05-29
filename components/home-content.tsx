@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ViewCounter } from "@/components/view-counter"
 
 const PAGE_SIZE = 10
 
@@ -163,7 +164,11 @@ export function HomeContent({ initialData }: HomeContentProps) {
                 </time>
                 <span className="mr-2">•</span>
                 <span className="mr-2">{post.readingTime || 1} min read</span>
-                <LikeCountDisplay id={post.slug} />
+                <span className="mr-2">•</span>
+                <ViewCounter slug={post.slug} />
+                <span className="ml-2">
+                  <LikeCountDisplay id={post.slug} />
+                </span>
               </div>
             </Link>
           </article>

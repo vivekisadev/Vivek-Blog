@@ -5,33 +5,53 @@ export function useLike(postId: string) {
   const [likeCount, setLikeCount] = useState<number>(0);
 
   useEffect(() => {
-    // Initialize from local storage
+    // Check local storage for user's personal like status
     const storedLikes = JSON.parse(localStorage.getItem('postLikes') || '{}');
     setLiked(!!storedLikes[postId]);
 
-    const storedLikeCounts = JSON.parse(localStorage.getItem('postLikeCounts') || '{}');
-    setLikeCount(storedLikeCounts[postId] || 0);
+    // Fetch the total global like count from the database
+    const fetchLikeCount = async () => {
+      try {
+        const res = await fetch(`/api/likes/${postId}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          setLikeCount(data.count);
+        }
+      } catch (error) {
+        console.error("Failed to fetch like count", error);
+      }
+    };
+    fetchLikeCount();
   }, [postId]);
 
-  const toggleLike = () => {
-    setLiked(prevLiked => {
-      const newLiked = !prevLiked;
-      const storedLikes = JSON.parse(localStorage.getItem('postLikes') || '{}');
-      const storedLikeCounts = JSON.parse(localStorage.getItem('postLikeCounts') || '{}');
+  const toggleLike = async () => {
+    // Optimistic UI update
+    const newLiked = !liked;
+    setLiked(newLiked);
+    setLikeCount(prev => newLiked ? prev + 1 : Math.max(0, prev - 1));
 
-      if (newLiked) {
-        storedLikes[postId] = true;
-        storedLikeCounts[postId] = (storedLikeCounts[postId] || 0) + 1;
-      } else {
-        delete storedLikes[postId];
-        storedLikeCounts[postId] = Math.max(0, (storedLikeCounts[postId] || 0) - 1);
-      }
+    // Update local storage for personal status
+    const storedLikes = JSON.parse(localStorage.getItem('postLikes') || '{}');
+    if (newLiked) {
+      storedLikes[postId] = true;
+    } else {
+      delete storedLikes[postId];
+    }
+    localStorage.setItem('postLikes', JSON.stringify(storedLikes));
 
-      localStorage.setItem('postLikes', JSON.stringify(storedLikes));
-      localStorage.setItem('postLikeCounts', JSON.stringify(storedLikeCounts));
-      setLikeCount(storedLikeCounts[postId]);
-      return newLiked;
-    });
+    // Update global database
+    try {
+      await fetch(`/api/likes/${postId}`, {
+        method: newLiked ? "POST" : "DELETE",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+      });
+    } catch (error) {
+      console.error("Failed to update like count", error);
+      // Revert optimistic update on error
+      setLiked(!newLiked);
+      setLikeCount(prev => !newLiked ? prev + 1 : Math.max(0, prev - 1));
+    }
   };
 
   return { liked, likeCount, toggleLike };

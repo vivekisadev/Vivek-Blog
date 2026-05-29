@@ -6,6 +6,12 @@ import remarkGfm from "remark-gfm"
 import remarkRehype from "remark-rehype"
 import rehypeRaw from "rehype-raw"
 import rehypeStringify from "rehype-stringify"
+import rehypePrettyCode from "rehype-pretty-code"
+
+const prettyCodeOptions = {
+  theme: 'one-dark-pro',
+  keepBackground: true,
+}
 import { Metadata } from "next"
 import prisma from "@/lib/prisma"
 
@@ -118,6 +124,7 @@ export async function getPostById(id: string) {
         .use(remarkGfm)
         .use(remarkRehype, { allowDangerousHtml: true })
         .use(rehypeRaw)
+        .use(rehypePrettyCode, prettyCodeOptions)
         .use(rehypeStringify)
         .process(matterResult.content)
       const contentHtml = processedContent.toString()
@@ -144,13 +151,14 @@ export async function getPostById(id: string) {
       }
     })
 
-    if (dbPost) {
-      const processedContent = await remark()
-        .use(remarkGfm)
-        .use(remarkRehype, { allowDangerousHtml: true })
-        .use(rehypeRaw)
-        .use(rehypeStringify)
-        .process(dbPost.content)
+      if (dbPost) {
+        const processedContent = await remark()
+          .use(remarkGfm)
+          .use(remarkRehype, { allowDangerousHtml: true })
+          .use(rehypeRaw)
+          .use(rehypePrettyCode, prettyCodeOptions)
+          .use(rehypeStringify)
+          .process(dbPost.content)
       const contentHtml = processedContent.toString()
 
       return {

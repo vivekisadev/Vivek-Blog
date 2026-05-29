@@ -40,3 +40,8 @@ model ViewCount {
   slug  String @id
   count Int    @default(0)
 }
+
+model LikeCount {
+  slug  String @id
+  count Int    @default(0)
+}

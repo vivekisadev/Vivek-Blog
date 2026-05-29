@@ -1,7 +1,54 @@
 import { useEffect, useRef } from "react"
 import { format } from "date-fns"
 import mediumZoom from 'medium-zoom'
+import Link from 'next/link'
 import type { Note } from "@/types/note"
+
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { Github, Linkedin, Instagram, MapPin, Link as LinkIcon } from "lucide-react"
+
+function UserHoverCard({ children }: { children: React.ReactNode }) {
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        {children}
+      </HoverCardTrigger>
+      <HoverCardContent align="start" className="w-80">
+        <div className="flex justify-between space-x-4">
+          <img
+            src="/viveklogo.jpg"
+            alt="Vivek's avatar"
+            className="w-12 h-12 rounded-full object-cover border-[1px] border-zinc-100 dark:border-zinc-800"
+          />
+          <div className="space-y-1 flex-1">
+            <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Vivek</h4>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Software Engineer building things for the web. Love, code, and write.
+            </p>
+            <div className="flex items-center pt-2 gap-3 text-zinc-500 dark:text-zinc-400">
+              <a href="https://thisisvivek.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100" title="Portfolio">
+                <LinkIcon className="w-4 h-4" />
+              </a>
+              <a href="https://github.com/vivekisadev" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100" title="GitHub">
+                <Github className="w-4 h-4" />
+              </a>
+              <a href="https://www.linkedin.com/in/vivekverma16/" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100" title="LinkedIn">
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <a href="https://www.instagram.com/iamvivek1602/" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100" title="Instagram">
+                <Instagram className="w-4 h-4" />
+              </a>
+            </div>
+            <div className="flex items-center gap-1 pt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <MapPin className="w-3 h-3" />
+              <span>Earth</span>
+            </div>
+          </div>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  )
+}
 
 export function NoteCard({ note, isLast }: { note: Note; isLast?: boolean }) {
   const contentRef = useRef<HTMLDivElement>(null)
@@ -99,18 +146,24 @@ export function NoteCard({ note, isLast }: { note: Note; isLast?: boolean }) {
       
 
       <div className="relative flex items-stretch gap-3">
-        <div className="relative">
-          <img
-            src="/viveklogo.jpg"
-            alt="Vivek's avatar"
-            className="w-10 h-10 rounded-full object-cover border-[1px] border-zinc-100 dark:border-zinc-800 shadow-sm"
-          />
-        </div>
+        <UserHoverCard>
+          <Link href="/about" className="relative cursor-pointer shrink-0">
+            <img
+              src="/viveklogo.jpg"
+              alt="Vivek's avatar"
+              className="w-10 h-10 rounded-full object-cover border-[1px] border-zinc-100 dark:border-zinc-800 shadow-sm hover:ring-2 hover:ring-zinc-200 dark:hover:ring-zinc-700 transition-all"
+            />
+          </Link>
+        </UserHoverCard>
         
 
         <div className="flex-1 -mt-1">
           <div className="flex items-baseline gap-2">
-            <div className="text-sm font-medium text-zinc-800 dark:text-zinc-200">Vivek</div>
+            <UserHoverCard>
+              <Link href="/about" className="text-sm font-medium text-zinc-800 dark:text-zinc-200 hover:underline decoration-zinc-400 underline-offset-2">
+                Vivek
+              </Link>
+            </UserHoverCard>
             <time className="text-xs text-zinc-400 dark:text-zinc-500 font-mono tabular-nums">
               {format(new Date(note.date), "yyyy/MM/dd")}
             </time>

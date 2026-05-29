@@ -143,7 +143,7 @@ export function AboutContent({ initialStats }: AboutContentProps) {
             </div>
             <div className="flex flex-wrap justify-center md:justify-start gap-3">
               <a
-                href="#"
+                href="https://thisisvivek.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center px-4 py-2 rounded-lg

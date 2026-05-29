@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X, Loader2 } from "lucide-react"
+import { X, Loader2, Maximize2, Minimize2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface MediaPopupProps {
@@ -15,10 +15,12 @@ interface MediaPopupProps {
 
 export function MediaPopup({ type, src, title, open, onOpenChange }: MediaPopupProps) {
   const [iframeLoading, setIframeLoading] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     if (open) {
       setIframeLoading(true)
+      setIsFullscreen(false)
     }
   }, [open, src])
 
@@ -59,34 +61,58 @@ export function MediaPopup({ type, src, title, open, onOpenChange }: MediaPopupP
 
             <DialogPrimitive.Content asChild forceMount>
               <motion.div
-                className={`fixed left-1/2 top-1/2 z-[101] w-[95vw] ${maxWidthClass} -translate-x-1/2 -translate-y-1/2 outline-none`}
-                initial={{ opacity: 0, scale: 0.92, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.92, y: 20 }}
-                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="fixed inset-0 z-[101] flex items-center justify-center pointer-events-none outline-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               >
+                <motion.div
+                  layout
+                  className={`pointer-events-auto flex flex-col outline-none overflow-hidden bg-zinc-950 shadow-2xl transition-all duration-300 ease-in-out
+                    ${isFullscreen ? 'w-[100vw] h-[100vh] rounded-none border-0' : `w-[95vw] ${maxWidthClass} max-h-[90vh] rounded-xl border border-zinc-700/50`}
+                  `}
+                  initial={{ scale: 0.92, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.92, y: 20 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 bg-zinc-900/90 backdrop-blur-sm rounded-t-xl border border-zinc-700/50 border-b-0">
-                  <DialogPrimitive.Title className="text-sm font-medium text-zinc-200 truncate pr-4">
+                <div 
+                  className={`flex items-center justify-between px-4 py-3 bg-zinc-900/90 backdrop-blur-sm shrink-0 cursor-pointer transition-colors hover:bg-zinc-800/90 ${isFullscreen ? 'border-b border-zinc-700/50' : 'border-b border-zinc-700/50'}`}
+                  onClick={() => setIsFullscreen(!isFullscreen)}
+                >
+                  <DialogPrimitive.Title className="text-sm font-medium text-zinc-200 truncate pr-4 select-none">
                     {title}
                   </DialogPrimitive.Title>
-                  <DialogPrimitive.Close className="shrink-0 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700/50 transition-all duration-150">
-                    <X className="w-4 h-4" />
-                  </DialogPrimitive.Close>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setIsFullscreen(!isFullscreen); }}
+                      className="shrink-0 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700/50 transition-all duration-150"
+                    >
+                      {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                    </button>
+                    <DialogPrimitive.Close 
+                      onClick={(e) => e.stopPropagation()}
+                      className="shrink-0 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700/50 transition-all duration-150"
+                    >
+                      <X className="w-4 h-4" />
+                    </DialogPrimitive.Close>
+                  </div>
                 </div>
 
                 {/* Content */}
-                <div className="relative bg-zinc-950 rounded-b-xl border border-zinc-700/50 border-t-0 overflow-hidden">
+                <div className="relative flex-1 w-full overflow-hidden bg-zinc-950">
                   {type === "video" && (
-                    <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                    <div className={`relative w-full ${isFullscreen ? 'h-full flex items-center justify-center bg-black' : ''}`} style={!isFullscreen ? { paddingBottom: "56.25%" } : {}}>
                       {iframeLoading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-zinc-950">
+                        <div className="absolute inset-0 flex items-center justify-center bg-zinc-950 z-10">
                           <Loader2 className="w-8 h-8 text-zinc-500 animate-spin" />
                         </div>
                       )}
                       <iframe
                         src={getEmbedSrc(src)}
-                        className="absolute inset-0 w-full h-full"
+                        className={`absolute inset-0 w-full h-full ${isFullscreen ? 'max-h-full' : ''}`}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                         onLoad={() => setIframeLoading(false)}
@@ -95,7 +121,7 @@ export function MediaPopup({ type, src, title, open, onOpenChange }: MediaPopupP
                   )}
 
                   {type === "iframe" && (
-                    <div className="relative w-full" style={{ height: "75vh" }}>
+                    <div className="relative w-full h-full" style={!isFullscreen ? { height: "75vh" } : {}}>
                       {iframeLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-zinc-950 z-10">
                           <div className="flex flex-col items-center gap-3">
@@ -115,16 +141,17 @@ export function MediaPopup({ type, src, title, open, onOpenChange }: MediaPopupP
                   )}
 
                   {type === "image" && (
-                    <div className="flex items-center justify-center p-4 max-h-[80vh] overflow-auto">
+                    <div className="flex items-center justify-center p-4 w-full h-full overflow-auto bg-zinc-950/50">
                       <img
                         src={src}
                         alt={title}
-                        className="max-w-full max-h-[75vh] object-contain rounded-lg"
+                        className={`max-w-full object-contain ${isFullscreen ? 'h-full max-h-full' : 'max-h-[75vh]'}`}
                         onLoad={() => setIframeLoading(false)}
                       />
                     </div>
                   )}
                 </div>
+              </motion.div>
               </motion.div>
             </DialogPrimitive.Content>
           </DialogPrimitive.Portal>

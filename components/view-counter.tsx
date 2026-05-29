@@ -3,18 +3,18 @@
 import { useEffect, useState } from "react"
 import { Eye } from "lucide-react"
 
-export function ViewCounter({ slug }: { slug: string }) {
+export function ViewCounter({ slug, increment = false }: { slug: string; increment?: boolean }) {
   const [views, setViews] = useState<number | null>(null)
 
   useEffect(() => {
-    // Fetch and increment on load
-    const incrementView = async () => {
+    const fetchViews = async () => {
       try {
         const res = await fetch(`/api/views/${slug}`, {
-          method: "POST",
+          method: increment ? "POST" : "GET",
           headers: {
             "Content-Type": "application/json",
           },
+          cache: "no-store",
         })
         if (res.ok) {
           const data = await res.json()
@@ -25,11 +25,11 @@ export function ViewCounter({ slug }: { slug: string }) {
       }
     }
     
-    incrementView()
-  }, [slug])
+    fetchViews()
+  }, [slug, increment])
 
   if (views === null) {
-    return null // or a loading skeleton
+    return <div className="flex items-center gap-1.5 opacity-0"><Eye className="w-4 h-4" /><span>0 views</span></div> // placeholder to prevent layout shift
   }
 
   return (
