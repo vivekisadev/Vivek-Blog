@@ -126,8 +126,8 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       const href = a.getAttribute('href')
       if (!href) return
       
-      // Only intercept external links
-      if (href.startsWith('http') && !href.includes(window.location.host)) {
+      // Intercept all links to open in the media popup
+      if (href.startsWith('http') || href.startsWith('/')) {
         a.addEventListener('click', (e) => {
           e.preventDefault()
           
