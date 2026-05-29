@@ -247,9 +247,12 @@ export function ContentForm({ initialData, onSubmitAction, isEditMode = false }:
     try {
       const res = await uploadSimulationToDb(formData)
       if (res.success) {
-        const embedHtml = `\n<div class="media-popup" data-type="iframe" data-src="/api/simulations/${res.id}" data-title="Simulation: ${file.name}">🌐 Open Simulation: ${file.name}</div>\n`
-        insertMarkdown(embedHtml)
-        toast.success('Simulation uploaded successfully')
+        const url = `${window.location.origin}/api/simulations/${res.id}`
+        // Copy to clipboard
+        await navigator.clipboard.writeText(url)
+        toast.success('Simulation uploaded! Link copied to clipboard.', {
+          description: 'You can now paste this URL into the "Embed Link" popup.'
+        })
       } else {
         toast.error(res.message)
       }
