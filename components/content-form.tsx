@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { getAvailableTags, parseMarkdown } from '@/app/actions/content'
-import { uploadImage } from '@/app/actions/upload'
+import { uploadImage, uploadSimulationToDb } from '@/app/actions/upload'
 import { MarkdownContent } from '@/components/markdown-content'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { FileText, StickyNote, Send, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Code, List, Video, Globe, MonitorPlay, Save } from 'lucide-react'
+import { FileText, StickyNote, Send, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Code, List, Video, Globe, MonitorPlay, Save, FileCode } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -229,6 +229,36 @@ export function ContentForm({ initialData, onSubmitAction, isEditMode = false }:
       setUploadingImage(false)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const simFileInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingSim, setUploadingSim] = useState(false)
+
+  const handleSimUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingSim(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await uploadSimulationToDb(formData)
+      if (res.success) {
+        const embedHtml = `\n<div class="media-popup" data-type="iframe" data-src="/api/simulations/${res.id}" data-title="Simulation: ${file.name}">🌐 Open Simulation: ${file.name}</div>\n`
+        insertMarkdown(embedHtml)
+        toast.success('Simulation uploaded successfully')
+      } else {
+        toast.error(res.message)
+      }
+    } catch (err: any) {
+      toast.error('Failed to upload simulation')
+    } finally {
+      setUploadingSim(false)
+      if (simFileInputRef.current) {
+        simFileInputRef.current.value = ''
       }
     }
   }
@@ -457,6 +487,26 @@ export function ContentForm({ initialData, onSubmitAction, isEditMode = false }:
                       <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     ) : (
                       <ImageIcon className="w-4 h-4" />
+                    )}
+                  </button>
+                  <input 
+                    type="file" 
+                    ref={simFileInputRef} 
+                    onChange={handleSimUpload} 
+                    accept=".html" 
+                    className="hidden" 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => simFileInputRef.current?.click()} 
+                    disabled={uploadingSim}
+                    className={`p-1.5 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded text-zinc-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 ${uploadingSim ? 'opacity-50 cursor-wait' : ''}`} 
+                    title="Upload HTML Simulation (to DB)"
+                  >
+                    {uploadingSim ? (
+                      <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    ) : (
+                      <FileCode className="w-4 h-4" />
                     )}
                   </button>
                   <div className="w-px h-4 bg-zinc-300 dark:bg-zinc-700 mx-1" />

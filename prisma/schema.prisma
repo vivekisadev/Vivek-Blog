@@ -52,3 +52,10 @@ model GuestbookMessage {
   message   String
   createdAt DateTime @default(now())
 }
+
+model Simulation {
+  id        String   @id @default(cuid())
+  name      String
+  content   String
+  createdAt DateTime @default(now())
+}

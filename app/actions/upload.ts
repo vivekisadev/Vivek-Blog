@@ -61,3 +61,31 @@ export async function uploadImage(formData: FormData) {
     return { success: false, message: 'Failed to save image: ' + err.message }
   }
 }
+
+import prisma from '@/lib/prisma'
+
+export async function uploadSimulationToDb(formData: FormData) {
+  const file = formData.get('file') as File
+  if (!file) {
+    return { success: false, message: 'No file provided' }
+  }
+
+  const bytes = await file.arrayBuffer()
+  const content = new TextDecoder().decode(bytes)
+
+  try {
+    const simulation = await prisma.simulation.create({
+      data: {
+        name: file.name,
+        content: content,
+      }
+    })
+    return {
+      success: true,
+      id: simulation.id,
+      message: 'Simulation uploaded to DB successfully'
+    }
+  } catch (err: any) {
+    return { success: false, message: 'Failed to save simulation to DB: ' + err.message }
+  }
+}
