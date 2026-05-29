@@ -11,6 +11,8 @@ import { ScrollProgress } from "@/components/scroll-progress"
 import { Clock, Calendar } from "lucide-react"
 import TextReveal from '@/components/forgeui/text-reveal'
 import { ViewCounter } from "@/components/view-counter"
+import prisma from "@/lib/prisma"
+import { AdminEditButton } from "@/components/admin-edit-button"
 
 
 import { TableOfContents } from "@/components/table-of-contents"
@@ -37,6 +39,14 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
     const plainText = post.contentHtml.replace(/<[^>]*>?/gm, '')
     const wordCount = plainText.split(/\s+/).length
     const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+    
+    const [viewCount, likeCount] = await Promise.all([
+      prisma.viewCount.findUnique({ where: { slug: id } }),
+      prisma.likeCount.findUnique({ where: { slug: id } })
+    ])
+    
+    const initialViews = viewCount?.count || 0
+    const initialLikes = likeCount?.count || 0
 
     return (
       <Layout>
@@ -46,12 +56,13 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
             
           <article className="mt-8">
             <header className="mb-12 text-center">
-              <div className="mb-6 flex justify-center">
+              <div className="mb-6 flex justify-center flex-col items-center gap-4">
                 <TextReveal
                   staggerDelay={0.05}
                   text={post.title}
                   className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight"
                 />
+                <AdminEditButton type="post" id={id} />
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-zinc-500 dark:text-zinc-400 mb-6">
                 <div className="flex items-center gap-1.5">
@@ -64,12 +75,12 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                   <span>{readingTime} min read</span>
                 </div>
                 <span>•</span>
-                <ViewCounter slug={id} increment={true} />
+                <ViewCounter slug={id} increment={true} initialViews={initialViews} />
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex flex-col items-center gap-6 mt-6">
                   <Tags tags={post.tags} interactive={false} />
-                  <LikeShareButtons id={post.id} title={post.title} excerpt={post.excerpt || ""} />
+                  <LikeShareButtons id={post.id} title={post.title} excerpt={post.excerpt || ""} initialLikes={initialLikes} />
                 </div>
               )}
             </header>

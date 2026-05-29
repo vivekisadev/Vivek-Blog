@@ -6,6 +6,7 @@ import type { Note } from "@/types/note"
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Github, Linkedin, Instagram, MapPin, Link as LinkIcon } from "lucide-react"
+import { AdminEditButton } from "@/components/admin-edit-button"
 
 function UserHoverCard({ children }: { children: React.ReactNode }) {
   return (
@@ -167,6 +168,7 @@ export function NoteCard({ note, isLast }: { note: Note; isLast?: boolean }) {
             <time className="text-xs text-zinc-400 dark:text-zinc-500 font-mono tabular-nums">
               {format(new Date(note.date), "yyyy/MM/dd")}
             </time>
+            <AdminEditButton type="note" id={note.id} />
           </div>
           
           <div 

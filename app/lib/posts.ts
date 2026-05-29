@@ -8,10 +8,12 @@ import rehypeRaw from "rehype-raw"
 import rehypeSlug from "rehype-slug"
 import rehypeStringify from "rehype-stringify"
 import rehypePrettyCode from "rehype-pretty-code"
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
 
-const prettyCodeOptions = {
+const prettyCodeOptions: any = {
   theme: 'one-dark-pro',
-  keepBackground: true,
+  keepBackground: false,
 }
 import { Metadata } from "next"
 import prisma from "@/lib/prisma"
@@ -122,8 +124,10 @@ export async function getPostById(id: string) {
       const matterResult = matter(fileContents)
 
       const processedContent = await remark()
+        .use(remarkMath)
         .use(remarkGfm)
         .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeKatex)
         .use(rehypeRaw)
         .use(rehypeSlug)
         .use(rehypePrettyCode, prettyCodeOptions)
@@ -155,8 +159,10 @@ export async function getPostById(id: string) {
 
       if (dbPost) {
         const processedContent = await remark()
+          .use(remarkMath)
           .use(remarkGfm)
           .use(remarkRehype, { allowDangerousHtml: true })
+          .use(rehypeKatex)
           .use(rehypeRaw)
           .use(rehypeSlug)
           .use(rehypePrettyCode, prettyCodeOptions)

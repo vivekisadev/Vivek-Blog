@@ -13,27 +13,9 @@ import { MediaPopup } from '@/components/media-popup'
 export function MarkdownContent({ content }: MarkdownContentProps) {
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const renderMath = (tex: string, displayMode: boolean): string => {
-    try {
-      return katex.renderToString(tex, {
-        displayMode: displayMode,
-        throwOnError: false
-      })
-    } catch (error) {
-      console.error('KaTeX error:', error)
-      return tex
-    }
-  }
-
+  // Removed flawed client-side math regex that breaks HTML.
+  // Math parsing should be done via remark-math on the server.
   const processContent = (content: string): string => {
-    content = content.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
-      return `<div class="katex-block">${renderMath(tex.trim(), true)}</div>`
-    })
-
-    content = content.replace(/\$([^\$]+?)\$/g, (_, tex) => {
-      return `<span class="katex-inline">${renderMath(tex.trim(), false)}</span>`
-    })
-
     return content
   }
 

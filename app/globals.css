@@ -188,12 +188,12 @@
 }
 
 .prose pre {
-  @apply p-4 rounded-lg overflow-x-auto my-6 text-sm border border-zinc-200 dark:border-zinc-700;
+  @apply bg-[#000000] text-zinc-100 p-4 rounded-lg whitespace-pre-wrap break-words my-6 text-sm border border-zinc-800;
   font-family: "SF Mono", "SF Mono SC", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .prose pre code {
-  @apply bg-transparent p-0;
+  @apply bg-transparent p-0 text-inherit;
 }
 
 .prose img {

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 
-export function useLike(postId: string) {
+export function useLike(postId: string, initialLikeCount?: number) {
   const [liked, setLiked] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<number>(0);
+  const [likeCount, setLikeCount] = useState<number>(initialLikeCount ?? 0);
 
   useEffect(() => {
     // Check local storage for user's personal like status
     const storedLikes = JSON.parse(localStorage.getItem('postLikes') || '{}');
     setLiked(!!storedLikes[postId]);
+
+    if (initialLikeCount !== undefined) return;
 
     // Fetch the total global like count from the database
     const fetchLikeCount = async () => {

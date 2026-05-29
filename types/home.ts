@@ -8,5 +8,6 @@ export interface HomeContentProps {
     tags: Array<{ tag: string; count: number }>;
     currentPage: number;
     totalPages: number;
+    stats: Record<string, { views: number; likes: number }>;
   };
 }

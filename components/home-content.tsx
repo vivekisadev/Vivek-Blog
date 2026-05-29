@@ -89,8 +89,8 @@ export function HomeContent({ initialData }: HomeContentProps) {
     initialData.totalPages
   );
 
-  function LikeCountDisplay({ id }: { id: string }) {
-    const { likeCount } = useLike(id);
+  function LikeCountDisplay({ id, initialLikes }: { id: string, initialLikes?: number }) {
+    const { likeCount } = useLike(id, initialLikes);
     return (
       <span className="flex items-center">
         <svg
@@ -165,9 +165,9 @@ export function HomeContent({ initialData }: HomeContentProps) {
                 <span className="mr-2">•</span>
                 <span className="mr-2">{post.readingTime || 1} min read</span>
                 <span className="mr-2">•</span>
-                <ViewCounter slug={post.slug} />
+                <ViewCounter slug={post.slug} initialViews={initialData.stats?.[post.slug]?.views || 0} />
                 <span className="ml-2">
-                  <LikeCountDisplay id={post.slug} />
+                  <LikeCountDisplay id={post.slug} initialLikes={initialData.stats?.[post.slug]?.likes || 0} />
                 </span>
               </div>
             </Link>

@@ -8,11 +8,12 @@ interface LikeShareButtonsProps {
   id: string
   title: string
   excerpt: string
+  initialLikes?: number
 }
 
-export function LikeShareButtons({ id, title, excerpt }: LikeShareButtonsProps) {
+export function LikeShareButtons({ id, title, excerpt, initialLikes }: LikeShareButtonsProps) {
   const postUrl = typeof window !== "undefined" ? window.location.href : "";
-  const { liked, likeCount, toggleLike } = useLike(id);
+  const { liked, likeCount, toggleLike } = useLike(id, initialLikes);
   const { share } = useShare({ url: postUrl, title, text: excerpt });
 
   return (

@@ -3,7 +3,10 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { remark } from 'remark'
-import html from 'remark-html'
+import remarkMath from 'remark-math'
+import remarkRehype from 'remark-rehype'
+import rehypeKatex from 'rehype-katex'
+import rehypeStringify from 'rehype-stringify'
 import remarkGfm from 'remark-gfm'
 import prisma from '@/lib/prisma'
 import { notifySubscribers, useDatabase as useDatabaseNotifications } from '@/lib/notifications'
@@ -160,8 +163,116 @@ export async function getAvailableTags() {
 
 export async function parseMarkdown(content: string): Promise<string> {
   const processedContent = await remark()
+    .use(remarkMath)
     .use(remarkGfm)
-    .use(html, { sanitize: false })
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeKatex)
+    .use(rehypeStringify)
     .process(content)
   return processedContent.toString()
+}
+
+import matter from "gray-matter"
+
+export async function getRawContent(type: 'post' | 'note', id: string) {
+  if (type === 'post') {
+    // 1. Try DB first
+    const dbPost = await prisma.post.findFirst({
+      where: {
+        OR: [
+          { slug: id },
+          { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
+        ]
+      }
+    })
+    if (dbPost) {
+      return { id: dbPost.slug || dbPost.id.toString(), type: 'post', title: dbPost.title, tags: dbPost.tags?.join(', ') || '', content: dbPost.content, date: dbPost.createdAt.toISOString().split('T')[0] }
+    }
+    // 2. Try FS
+    const fullPath = path.join(process.cwd(), "content/posts", `${id}.md`)
+    try {
+      const fileContents = await fs.readFile(fullPath, "utf8")
+      const matterResult = matter(fileContents)
+      return { id, type: 'post', title: matterResult.data.title || '', tags: (matterResult.data.tags || []).join(', '), content: matterResult.content, date: matterResult.data.date || '' }
+    } catch { return null }
+  } else {
+    // Note
+    const dbNote = await prisma.note.findFirst({ where: { id: isNaN(parseInt(id)) ? -1 : parseInt(id) } })
+    if (dbNote) {
+      return { id: dbNote.id.toString(), type: 'note', content: dbNote.content, date: dbNote.createdAt.toISOString().split('T')[0] }
+    }
+    const fullPath = path.join(process.cwd(), "content/notes", `${id}.md`)
+    try {
+      const fileContents = await fs.readFile(fullPath, "utf8")
+      const matterResult = matter(fileContents)
+      return { id, type: 'note', content: matterResult.content, date: matterResult.data.date || '' }
+    } catch { return null }
+  }
+}
+
+export async function updateContent(formData: FormData) {
+  try {
+    const id = formData.get('id') as string
+    const type = formData.get('type') as 'post' | 'note'
+    const date = formData.get('date') as string || new Date().toISOString().split('T')[0]
+    const content = formData.get('content') as string
+
+    if (!id) throw new Error("ID is required for update")
+
+    if (type === 'post') {
+      const title = formData.get('title') as string
+      const tagsStr = formData.get('tags') as string
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()) : []
+
+      // Try update DB
+      const dbPost = await prisma.post.findFirst({
+        where: {
+          OR: [
+            { slug: id },
+            { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
+          ]
+        }
+      })
+
+      if (dbPost) {
+        await prisma.post.update({
+          where: { id: dbPost.id },
+          data: { title, content, tags, createdAt: new Date(date) }
+        })
+        return { success: true, message: `Post updated in DB: ${id}` }
+      }
+
+      // Try update FS
+      const postsDir = path.join(process.cwd(), 'content/posts')
+      let md = `---\n`
+      md += `title: "${title.replace(/"/g, '\\"')}"\n`
+      md += `date: "${date}"\n`
+      md += `tags: ${JSON.stringify(tags)}\n`
+      md += `---\n\n`
+      md += content
+      await fs.writeFile(path.join(postsDir, `${id}.md`), md, 'utf-8')
+      return { success: true, message: `Post updated in FS: ${id}` }
+
+    } else if (type === 'note') {
+      const dbNote = await prisma.note.findFirst({ where: { id: isNaN(parseInt(id)) ? -1 : parseInt(id) } })
+      if (dbNote) {
+        await prisma.note.update({
+          where: { id: dbNote.id },
+          data: { content, createdAt: new Date(date) }
+        })
+        return { success: true, message: `Note updated in DB: ${id}` }
+      }
+
+      const notesDir = path.join(process.cwd(), 'content/notes')
+      let md = `---\n`
+      md += `date: "${date}"\n`
+      md += `---\n\n`
+      md += content
+      await fs.writeFile(path.join(notesDir, `${id}.md`), md, 'utf-8')
+      return { success: true, message: `Note updated in FS: ${id}` }
+    }
+    return { success: false, message: 'Invalid type' }
+  } catch (error: any) {
+    return { success: false, message: error.message || 'Unknown server error' }
+  }
 }
