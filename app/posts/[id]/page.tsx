@@ -12,7 +12,7 @@ import { Clock, Calendar } from "lucide-react"
 import TextReveal from '@/components/forgeui/text-reveal'
 import { ViewCounter } from "@/components/view-counter"
 import prisma from "@/lib/prisma"
-import { AdminEditButton } from "@/components/admin-edit-button"
+import { AdminControls } from "@/components/admin-controls"
 
 
 import { TableOfContents } from "@/components/table-of-contents"
@@ -62,7 +62,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                   text={post.title}
                   className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight"
                 />
-                <AdminEditButton type="post" id={id} />
+                <AdminControls type="post" id={id} />
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-zinc-500 dark:text-zinc-400 mb-6">
                 <div className="flex items-center gap-1.5">

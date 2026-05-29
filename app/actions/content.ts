@@ -276,3 +276,53 @@ export async function updateContent(formData: FormData) {
     return { success: false, message: error.message || 'Unknown server error' }
   }
 }
+
+export async function deleteContent(id: string, type: 'post' | 'note') {
+  try {
+    if (type === 'post') {
+      // Try delete from DB
+      const dbPost = await prisma.post.findFirst({
+        where: {
+          OR: [
+            { slug: id },
+            { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
+          ]
+        }
+      })
+      if (dbPost) {
+        await prisma.post.delete({ where: { id: dbPost.id } })
+        try {
+          await prisma.viewCount.deleteMany({ where: { slug: dbPost.slug } })
+          await prisma.likeCount.deleteMany({ where: { slug: dbPost.slug } })
+        } catch (e) {} 
+        return { success: true, message: `Post deleted from DB` }
+      }
+
+      // Try delete from FS
+      const fullPath = path.join(process.cwd(), "content/posts", `${id}.md`)
+      try {
+        await fs.unlink(fullPath)
+        return { success: true, message: `Post deleted from FS` }
+      } catch (e) {
+        return { success: false, message: `Post not found` }
+      }
+    } else {
+      // Note
+      const dbNote = await prisma.note.findFirst({ where: { id: isNaN(parseInt(id)) ? -1 : parseInt(id) } })
+      if (dbNote) {
+        await prisma.note.delete({ where: { id: dbNote.id } })
+        return { success: true, message: `Note deleted from DB` }
+      }
+      
+      const fullPath = path.join(process.cwd(), "content/notes", `${id}.md`)
+      try {
+        await fs.unlink(fullPath)
+        return { success: true, message: `Note deleted from FS` }
+      } catch (e) {
+        return { success: false, message: `Note not found` }
+      }
+    }
+  } catch (error: any) {
+    return { success: false, message: error.message || 'Unknown server error' }
+  }
+}
