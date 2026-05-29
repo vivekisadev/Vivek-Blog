@@ -45,3 +45,10 @@ model LikeCount {
   slug  String @id
   count Int    @default(0)
 }
+
+model GuestbookMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  message   String
+  createdAt DateTime @default(now())
+}

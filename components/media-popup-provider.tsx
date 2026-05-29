@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { MediaPopup } from "./media-popup"
 
-export function MediaPopupProvider() {
+export function MediaPopupProvider({ children }: { children: React.ReactNode }) {
   const [popupState, setPopupState] = useState<{
     open: boolean
     type: "video" | "iframe" | "image"
@@ -32,12 +32,15 @@ export function MediaPopupProvider() {
   }, [])
 
   return (
-    <MediaPopup
-      type={popupState.type}
-      src={popupState.src}
-      title={popupState.title}
-      open={popupState.open}
-      onOpenChange={(open) => setPopupState((prev) => ({ ...prev, open }))}
-    />
+    <>
+      {children}
+      <MediaPopup
+        type={popupState.type}
+        src={popupState.src}
+        title={popupState.title}
+        open={popupState.open}
+        onOpenChange={(open) => setPopupState((prev) => ({ ...prev, open }))}
+      />
+    </>
   )
 }

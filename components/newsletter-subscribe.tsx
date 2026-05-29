@@ -12,12 +12,13 @@ export function NewsletterSubscribe() {
   async function handleSubscribe(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    const formData = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const formData = new FormData(form)
     try {
       const res = await subscribeUser(formData)
       setStatus(res.message)
       if (res.success) {
-        e.currentTarget.reset()
+        form.reset()
       }
     } catch (err: any) {
       console.error('Subscription error:', err)

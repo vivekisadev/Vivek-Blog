@@ -72,7 +72,7 @@ export function NavigationProgress() {
       style={{ opacity: visible || progress > 0 ? 1 : 0 }}
     >
       <div
-        className="h-full bg-zinc-900 dark:bg-zinc-100 transition-all duration-200 ease-out"
+        className="h-full bg-black dark:bg-zinc-100 transition-all duration-200 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

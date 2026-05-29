@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag } from './tag';
 import { Skeleton } from './ui/skeleton';
-import { Header } from './header';
 import { Footer } from './footer';
 
 function useTags(initialTags: Array<{ tag: string; count: number }>) {
@@ -157,9 +156,7 @@ export function NotesContent({ initialData }: NotesContentProps) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <Header showBackButton={true} title="Logs" />
-
-      <main>
+      <main className="mt-8">
         {allTags.length > 0 && tagElements}
 
         {postElements}

@@ -5,6 +5,7 @@ import { remark } from "remark"
 import remarkGfm from "remark-gfm"
 import remarkRehype from "remark-rehype"
 import rehypeRaw from "rehype-raw"
+import rehypeSlug from "rehype-slug"
 import rehypeStringify from "rehype-stringify"
 import rehypePrettyCode from "rehype-pretty-code"
 
@@ -124,6 +125,7 @@ export async function getPostById(id: string) {
         .use(remarkGfm)
         .use(remarkRehype, { allowDangerousHtml: true })
         .use(rehypeRaw)
+        .use(rehypeSlug)
         .use(rehypePrettyCode, prettyCodeOptions)
         .use(rehypeStringify)
         .process(matterResult.content)
@@ -156,6 +158,7 @@ export async function getPostById(id: string) {
           .use(remarkGfm)
           .use(remarkRehype, { allowDangerousHtml: true })
           .use(rehypeRaw)
+          .use(rehypeSlug)
           .use(rehypePrettyCode, prettyCodeOptions)
           .use(rehypeStringify)
           .process(dbPost.content)
@@ -260,7 +263,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       locale: 'en',
       images: [
         {
-          url: 'https://blogsbyvivek.vercel.app/',
+          url: `https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -271,7 +274,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: 'summary_large_image',
       title: post.title,
       description,
-      images: ['https://blogsbyvivek.vercel.app/'],
+      images: [`https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}`],
     },
   }
 }

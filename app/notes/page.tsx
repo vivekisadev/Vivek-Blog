@@ -2,7 +2,6 @@ import { Layout } from "@/components/layout"
 import { NotesPagination } from "@/components/notes-pagination"
 import { getPaginatedNotesAction } from "@/app/actions/notes"
 import { Footer } from "@/components/footer"
-import { Header } from "@/components/header"
 import { getAllPosts } from "@/app/lib/posts"
 
 export const revalidate = 60 // Revalidate every 60 seconds (ISR)
@@ -26,9 +25,7 @@ export default async function NotesPage({
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <Header showBackButton={true} title="essay" />
-
+      <div className="max-w-4xl mx-auto px-4 py-6">
         <main>
           <NotesPagination 
             initialNotes={notes}

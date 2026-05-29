@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Layout } from '@/components/layout'
 import { FileText, StickyNote, Send, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Code, List, Video, Globe, MonitorPlay } from 'lucide-react'
@@ -268,7 +267,6 @@ export default function CreateContent() {
     <AdminGate>
     <Layout>
       <div className="max-w-3xl mx-auto px-4 py-6">
-        <Header showBackButton={true} />
         
         <main className="mt-12 mb-20">
           <header className="mb-10">

@@ -3,16 +3,19 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import pg from 'pg'
 
 declare global {
-  var prisma: undefined | PrismaClient
+  var prismaInstance: undefined | PrismaClient
 }
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+  connectionTimeoutMillis: 10000, // Wait 10s for Neon cold start
+  idleTimeoutMillis: 30000,
+  max: 15,
+  ssl: { rejectUnauthorized: false }, // Neon requires SSL
 })
 const adapter = new PrismaPg(pool)
-const prisma = globalThis.prisma ?? new PrismaClient({ adapter })
+const prisma = globalThis.prismaInstance ?? new PrismaClient({ adapter })
 
 export default prisma
 
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globalThis.prismaInstance = prisma

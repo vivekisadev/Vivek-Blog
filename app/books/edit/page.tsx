@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout";
-import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,10 +195,8 @@ export default function BookEditorPage() {
   return (
     <AdminGate>
     <Layout>
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <Header showBackButton={true} title="Book Editor" />
-
-        <main className="mt-12 mb-20">
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <main className="mt-8 mb-24">
           <header className="mb-10">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-2">
               {view === "list" && "Your Books"}

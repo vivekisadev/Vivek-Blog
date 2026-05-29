@@ -7,6 +7,8 @@ import { BackToTop } from "@/components/back-to-top"
 import { NavigationProgress } from "@/components/navigation-progress"
 import { Suspense } from "react"
 import { MediaPopupProvider } from "@/components/media-popup-provider"
+import { CommandPalette } from "@/components/command-palette"
+import { Header } from "@/components/header"
 import "./globals.css"
 
 const inter = Inter({
@@ -26,7 +28,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Vivek Blog',
+  title: "Vivek's Blog",
   description: 'Love, code, and write.',
   keywords: ['blog', 'technology', 'personal blog', 'next.js'],
   authors: [{ name: 'Vivek' }],
@@ -37,17 +39,17 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.blogsbyvivek.vercel.com'),
+  metadataBase: new URL('https://thisisvivek.vercel.app'),
   openGraph: {
     type: 'website',
     locale: 'en',
-    url: 'https://www.blogsbyvivek.vercel.app',
-    title: 'Vivek\'s Blog',
-    description: 'love, code, and write.',
+    url: 'https://thisisvivek.vercel.app',
+    title: "Vivek's Blog",
+    description: 'Love, code, and write.',
     siteName: 'Vivek Blog',
     images: [
       {
-        url: 'https://www.blogsbyvivek.vercel.app/og-image.png',
+        url: 'https://thisisvivek.vercel.app/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Vivek Blog',
@@ -58,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Vivek's Blog",
     description: 'Love, code, and write.',
-    images: ['https://www.blogsbyvivek.vercel.app/og-image.png'],
+    images: ['https://thisisvivek.vercel.app/og-image.png'],
   },
   icons: {
     icon: '/viveklogo.jpg',
@@ -97,12 +99,17 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased`}>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Suspense fallback={null}>
             <NavigationProgress />
           </Suspense>
-          {children}
-          <MediaPopupProvider />
+          <MediaPopupProvider>
+            <CommandPalette />
+            <div className="max-w-5xl mx-auto px-4 mt-6">
+              <Header />
+            </div>
+            {children}
+          </MediaPopupProvider>
           {process.env.NEXT_PUBLIC_GA_ID && (
             <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID} />
           )}

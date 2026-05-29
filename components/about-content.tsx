@@ -5,7 +5,6 @@ import { Github,  Mail,  Rss, MessageCircle, User, Settings } from "lucide-react
 import { FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { Footer } from "@/components/footer"
 import { OptimizedImage } from "@/components/ui/optimized-image"
-import { Header } from "@/components/header"
 import { verifyAdminPassword } from "@/app/actions/auth"
 import Link from "next/link"
 
@@ -105,10 +104,8 @@ export function AboutContent({ initialStats }: AboutContentProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      <Header showBackButton={true} title="About" />
-
-      <main>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <main className="mt-8">
         <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
           <div 
             ref={imageRef}

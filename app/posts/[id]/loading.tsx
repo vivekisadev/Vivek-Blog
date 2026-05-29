@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import { Header } from "@/components/header"
 import { Layout } from "@/components/layout"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { Footer } from "@/components/footer"
@@ -8,10 +7,10 @@ export default function Loading() {
   return (
     <Layout>
       <ScrollProgress />
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <Header showBackButton={true} />
-
-        <article className="mt-12">
+      <div className="max-w-7xl mx-auto px-4 xl:px-8 flex gap-12 justify-center">
+        <div className="flex-1 w-full max-w-3xl py-6 min-w-0">
+          
+          <article className="mt-8">
           <header className="mb-12 flex flex-col items-center">
             {/* Title Skeleton */}
             <Skeleton className="h-10 sm:h-14 w-[80%] max-w-lg mb-6 rounded-md" />
@@ -66,6 +65,7 @@ export default function Loading() {
         <div className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800">
           <Footer />
         </div>
+      </div>
       </div>
     </Layout>
   )

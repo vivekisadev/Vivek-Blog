@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import type { PostMeta, NoteMeta } from "@/types/post"
 import Link from "next/link"
+import { MessageSquare } from "lucide-react"
 import { formatDate } from "@/app/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Footer } from "@/components/footer"
 import { PaginationButtons } from "@/components/pagination-buttons"
 import { Tag } from "@/components/tag"
-import { Header } from "@/components/header"
 import type { HomeContentProps } from "@/types/home"
 import { articleStyles } from "@/styles/article"
 import { CalendarHeatmapFloating } from "@/components/calendar-heatmap-floating"
@@ -182,36 +182,62 @@ export function HomeContent({ initialData }: HomeContentProps) {
   ), [loading, error, posts]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      <Header isHome={true} />
+    <div className="max-w-5xl mx-auto px-4 py-6">
 
-      <main className="min-h-[200px]">
-        <div className="mb-8">
-          {allTags.length > 0 && tagElements}
-        </div>
-
-        <div className="mb-8">
-          <CalendarHeatmapFloating posts={initialData.allPosts} notes={initialData.notes || []} />
-        </div>
-
-        <div className="min-h-[100px]">
-          {postElements}
-        </div>
-
-        {!loading && !error && totalPages > 1 && (
-          <div className="mt-4">
-            <PaginationButtons 
-              key={currentPage + '-' + totalPages}
-              currentPage={currentPage} 
-              totalPages={totalPages} 
-              onPageChange={handlePageChange} 
-              className="animate-in fade-in duration-300"
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
+        <main className="lg:col-span-8 min-h-[200px]">
+          <div className="mb-8">
+            {allTags.length > 0 && tagElements}
           </div>
-        )}
 
-        <NewsletterSubscribe />
-      </main>
+          <div className="mb-8">
+            <CalendarHeatmapFloating posts={initialData.allPosts} notes={initialData.notes || []} />
+          </div>
+
+          <div className="min-h-[100px]">
+            {postElements}
+          </div>
+
+          {!loading && !error && totalPages > 1 && (
+            <div className="mt-4">
+              <PaginationButtons 
+                key={currentPage + '-' + totalPages}
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={handlePageChange} 
+                className="animate-in fade-in duration-300"
+              />
+            </div>
+          )}
+        </main>
+        
+        <aside className="lg:col-span-4 space-y-8">
+          {/* Guestbook Promotional Banner */}
+          <Link href="/guestbook" className="group flex flex-col p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900/80 dark:to-zinc-800/80 border border-zinc-200/60 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 hover:shadow-lg dark:hover:shadow-[0_0_25px_rgba(255,255,255,0.03)] overflow-hidden relative block">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            
+            <div className="flex items-center gap-4 relative z-10 mb-4">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-800 shadow-sm border border-zinc-100 dark:border-zinc-700 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300 group-hover:shadow-indigo-500/10">
+                <MessageSquare className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
+              </div>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 text-lg flex items-center gap-2">
+                Sign my Guestbook! ✨
+              </h3>
+            </div>
+            
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 relative z-10 leading-relaxed mb-6">
+              Drop a message, say hi, or share your thoughts with other visitors. I'd love to hear from you!
+            </p>
+            
+            <div className="flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors relative z-10">
+              Leave a message <span className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
+          </Link>
+
+          <NewsletterSubscribe />
+        </aside>
+      </div>
+
       <Footer />
     </div>
   )

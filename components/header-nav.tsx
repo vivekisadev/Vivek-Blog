@@ -43,7 +43,7 @@ export function HeaderNav() {
   const isActive = (path: string) => pathname === path
   const linkClasses = (path: string) => {
     const active = isActive(path)
-    return `flex items-center ${
+    return `flex items-center whitespace-nowrap shrink-0 ${
       active 
         ? 'text-zinc-800 dark:text-zinc-300' 
         : 'text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-300'
@@ -60,34 +60,34 @@ export function HeaderNav() {
   }
 
   return (
-    <nav className="flex items-center space-x-4 text-sm">
+    <nav className="flex items-center gap-4 sm:gap-6 text-sm whitespace-nowrap">
       <Link 
         href="/notes" 
         className={linkClasses('/notes')}
       >
         <Pencil className={iconClasses('/notes')} />
-        <span className="hidden md:inline">My Logs</span>
+        <span>My Logs</span>
       </Link>
       <Link 
         href="/archive" 
         className={linkClasses('/archive')}
       >
         <Archive className={iconClasses('/archive')} />
-        <span className="hidden md:inline">Archive</span>
+        <span>Archive</span>
       </Link>
       <Link 
         href="/books" 
         className={linkClasses('/books')}
       >
         <Book className={iconClasses('/books')} />
-        <span className="hidden md:inline">Library</span>
+        <span>Library</span>
       </Link>
       <Link 
         href="/about" 
         className={linkClasses('/about')}
       >
         <User className={iconClasses('/about')} />
-        <span className="hidden md:inline">About</span>
+        <span>About</span>
       </Link>
       <ThemeToggleButton />
     </nav>

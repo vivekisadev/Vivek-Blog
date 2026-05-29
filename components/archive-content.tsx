@@ -8,7 +8,6 @@ import { delay } from "@/app/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Footer } from "@/components/footer"
 import { Tag } from "@/components/tag"
-import { Header } from "@/components/header"
 import type { ArchiveContentProps } from "@/types/archive"
 import { format } from "date-fns"
 import {
@@ -167,9 +166,7 @@ export function ArchiveContent({ initialData }: ArchiveContentProps) {
   ), [loading, error, postsByYear, isTransitioning]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      <Header showBackButton={true} title="all" />
-
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <main>
         {}
         {allTags.length > 0 && tagElements}

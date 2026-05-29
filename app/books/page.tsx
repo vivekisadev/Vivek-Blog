@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout";
-import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import InteractiveBook, { type BookPage } from "@/components/ui/interactive-book";
 import { getBooks, type BookData, type BookPageData } from "@/app/actions/books";
@@ -139,8 +138,6 @@ export default function BooksPage() {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <Header showBackButton={true} title="Library" />
-
         <main className="mt-12 mb-24">
           <header className="mb-12 text-center">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">

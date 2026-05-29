@@ -4,7 +4,6 @@ import { notFound } from "next/navigation"
 import { Footer } from "@/components/footer"
 import { Layout } from "@/components/layout"
 import { Tags } from "@/components/tag"
-import { Header } from "@/components/header"
 import { MarkdownContent } from "@/components/markdown-content"
 import { Metadata } from 'next'
 import { LikeShareButtons } from "@/components/like-share-buttons"
@@ -14,10 +13,10 @@ import TextReveal from '@/components/forgeui/text-reveal'
 import { ViewCounter } from "@/components/view-counter"
 
 
+import { TableOfContents } from "@/components/table-of-contents"
+
 export const dynamic = 'force-static'
 export const revalidate = false 
-
-
 
 export default async function Post({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -42,10 +41,10 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
     return (
       <Layout>
         <ScrollProgress />
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <Header showBackButton={true} />
-
-          <article className="mt-12">
+        <div className="max-w-7xl mx-auto px-4 xl:px-8 flex gap-12 justify-center">
+          <div className="flex-1 w-full max-w-3xl py-6 min-w-0">
+            
+          <article className="mt-8">
             <header className="mb-12 text-center">
               <div className="mb-6 flex justify-center">
                 <TextReveal
@@ -83,6 +82,8 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
           <div className="mt-16">
             <Footer />
           </div>
+          </div>
+          <TableOfContents />
         </div>
       </Layout>
     )
