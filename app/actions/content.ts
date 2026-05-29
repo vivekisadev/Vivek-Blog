@@ -10,6 +10,7 @@ import rehypeStringify from 'rehype-stringify'
 import remarkGfm from 'remark-gfm'
 import prisma from '@/lib/prisma'
 import { notifySubscribers, useDatabase as useDatabaseNotifications } from '@/lib/notifications'
+import { revalidatePath } from 'next/cache'
 
 function getTitleInitials(title: string) {
   const initials = title
@@ -239,6 +240,9 @@ export async function updateContent(formData: FormData) {
           where: { id: dbPost.id },
           data: { title, content, tags, createdAt: new Date(date) }
         })
+        revalidatePath('/')
+        revalidatePath(`/posts/${dbPost.slug}`)
+        revalidatePath(`/posts/${dbPost.id}`)
         return { success: true, message: `Post updated in DB: ${id}` }
       }
 
@@ -260,6 +264,8 @@ export async function updateContent(formData: FormData) {
           where: { id: dbNote.id },
           data: { content, createdAt: new Date(date) }
         })
+        revalidatePath('/')
+        revalidatePath('/notes')
         return { success: true, message: `Note updated in DB: ${id}` }
       }
 
@@ -295,13 +301,18 @@ export async function deleteContent(id: string, type: 'post' | 'note') {
           await prisma.viewCount.deleteMany({ where: { slug: dbPost.slug } })
           await prisma.likeCount.deleteMany({ where: { slug: dbPost.slug } })
         } catch (e) {} 
-        return { success: true, message: `Post deleted from DB` }
+        revalidatePath('/')
+        revalidatePath(`/posts/${dbPost.slug}`)
+        revalidatePath(`/posts/${dbPost.id}`)
+        return { success: true, message: `Post deleted from DB: ${id}` }
       }
 
       // Try delete from FS
       const fullPath = path.join(process.cwd(), "content/posts", `${id}.md`)
       try {
         await fs.unlink(fullPath)
+        revalidatePath('/')
+        revalidatePath(`/posts/${id}`)
         return { success: true, message: `Post deleted from FS` }
       } catch (e) {
         return { success: false, message: `Post not found` }
@@ -311,12 +322,16 @@ export async function deleteContent(id: string, type: 'post' | 'note') {
       const dbNote = await prisma.note.findFirst({ where: { id: isNaN(parseInt(id)) ? -1 : parseInt(id) } })
       if (dbNote) {
         await prisma.note.delete({ where: { id: dbNote.id } })
-        return { success: true, message: `Note deleted from DB` }
+        revalidatePath('/')
+        revalidatePath('/notes')
+        return { success: true, message: `Note deleted from DB: ${id}` }
       }
       
       const fullPath = path.join(process.cwd(), "content/notes", `${id}.md`)
       try {
         await fs.unlink(fullPath)
+        revalidatePath('/')
+        revalidatePath('/notes')
         return { success: true, message: `Note deleted from FS` }
       } catch (e) {
         return { success: false, message: `Note not found` }
