@@ -18,6 +18,21 @@ const prettyCodeOptions: any = {
 import { Metadata } from "next"
 import prisma from "@/lib/prisma"
 
+export function calculateReadingTime(html: string): number {
+  const plainText = html.replace(/<[^>]+>/g, ' ')
+  const words = plainText.trim().split(/\s+/).filter(word => word.length > 0)
+  
+  const wordsTimeMin = words.length / 225
+  
+  const imageCount = (html.match(/<img /g) || []).length
+  let imagesTimeSec = 0
+  for (let i = 0; i < imageCount; i++) {
+    imagesTimeSec += Math.max(12 - i, 3)
+  }
+  
+  return Math.max(1, Math.ceil(wordsTimeMin + (imagesTimeSec / 60)))
+}
+
 const postsDirectory = path.join(process.cwd(), "content/posts")
 
 try {
@@ -142,7 +157,7 @@ export async function getPostById(id: string) {
         contentHtml,
         tags: matterResult.data.tags || [],
         excerpt: matterResult.data.excerpt || "",
-        readingTime: Math.max(1, Math.ceil(matterResult.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)),
+        readingTime: calculateReadingTime(contentHtml),
         ...matterResult.data,
       } as PostData
     }
@@ -177,7 +192,7 @@ export async function getPostById(id: string) {
         contentHtml,
         tags: dbPost.tags || [],
         excerpt: dbPost.content.substring(0, 150) + '...',
-        readingTime: Math.max(1, Math.ceil(dbPost.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)),
+        readingTime: calculateReadingTime(contentHtml),
       } as PostData
     }
 

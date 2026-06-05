@@ -29,7 +29,7 @@ export function TableOfContents() {
             }
           })
         },
-        { rootMargin: "0% 0% -80% 0%" }
+        { rootMargin: "-10% 0% -70% 0%" }
       )
 
       elements.forEach((heading) => {
@@ -65,10 +65,10 @@ export function TableOfContents() {
             key={heading.id}
             href={`#${heading.id}`}
             className={cn(
-              "block -ml-px border-l-2 pl-4 py-1 hover:border-zinc-500 dark:hover:border-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors",
+              "block -ml-px border-l-2 pl-4 py-1 hover:border-zinc-500 dark:hover:border-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-300",
               heading.level === 3 && "ml-2",
               activeId === heading.id
-                ? "border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-medium"
+                ? "border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-medium [text-shadow:0_0_12px_rgba(0,0,0,0.3)] dark:[text-shadow:0_0_12px_rgba(255,255,255,0.5)]"
                 : "border-transparent text-zinc-500 dark:text-zinc-400"
             )}
           >

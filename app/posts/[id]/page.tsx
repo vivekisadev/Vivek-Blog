@@ -7,11 +7,12 @@ import { Tags } from "@/components/tag"
 import { MarkdownContent } from "@/components/markdown-content"
 import { Metadata } from 'next'
 import { LikeShareButtons } from "@/components/like-share-buttons"
-import { Clock, Calendar } from "lucide-react"
+import { Clock, Calendar, MessageCircle } from "lucide-react"
 import TextReveal from '@/components/forgeui/text-reveal'
 import { ViewCounter } from "@/components/view-counter"
 import prisma from "@/lib/prisma"
 import { AdminControls } from "@/components/admin-controls"
+import { Comments } from "@/components/comments"
 
 
 import { TableOfContents } from "@/components/table-of-contents"
@@ -35,13 +36,12 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
     }
 
     const postUrl = `https://blogsbyvivek.vercel.app/posts/${id}`
-    const plainText = post.contentHtml.replace(/<[^>]*>?/gm, '')
-    const wordCount = plainText.split(/\s+/).length
-    const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+    const readingTime = post.readingTime || 1
     
-    const [viewCount, likeCount] = await Promise.all([
+    const [viewCount, likeCount, commentCount] = await Promise.all([
       prisma.viewCount.findUnique({ where: { slug: id } }),
-      prisma.likeCount.findUnique({ where: { slug: id } })
+      prisma.likeCount.findUnique({ where: { slug: id } }),
+      prisma.comment.count({ where: { slug: id } })
     ])
     
     const initialViews = viewCount?.count || 0
@@ -74,11 +74,17 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                 </div>
                 <span>•</span>
                 <ViewCounter slug={id} increment={true} initialViews={initialViews} />
+                <span>•</span>
+                <div className="flex items-center gap-1.5" title={`${commentCount} comments`}>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>{commentCount}</span>
+                </div>
+                <span>•</span>
+                <LikeShareButtons id={post.id} title={post.title} excerpt={post.excerpt || ""} initialLikes={initialLikes} />
               </div>
               {post.tags && post.tags.length > 0 && (
-                <div className="flex flex-col items-center gap-6 mt-6">
+                <div className="flex justify-center mt-3">
                   <Tags tags={post.tags} interactive={false} />
-                  <LikeShareButtons id={post.id} title={post.title} excerpt={post.excerpt || ""} initialLikes={initialLikes} />
                 </div>
               )}
             </header>
@@ -86,6 +92,8 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
             <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 mb-12" />
             
             <MarkdownContent content={post.contentHtml} />
+            
+            <Comments slug={post.id} />
           </article>
           
           <div className="mt-16">

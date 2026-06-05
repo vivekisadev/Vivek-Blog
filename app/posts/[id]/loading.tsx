@@ -15,21 +15,26 @@ export default function Loading() {
             {/* Title Skeleton */}
             <Skeleton className="h-10 sm:h-14 w-[80%] max-w-lg mb-6 rounded-md" />
             
-            {/* Meta (Date and Reading Time) Skeleton */}
-            <div className="flex justify-center items-center gap-4 mb-6">
+            {/* Meta (Date, Reading Time, Views, Comments, Like/Share) Skeleton */}
+            <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
+              <Skeleton className="h-4 w-28 rounded-md" />
+              <Skeleton className="h-1 w-1 rounded-full" />
               <Skeleton className="h-4 w-24 rounded-md" />
-              <Skeleton className="h-4 w-4 rounded-full" /> {/* Bullet */}
-              <Skeleton className="h-4 w-24 rounded-md" />
+              <Skeleton className="h-1 w-1 rounded-full" />
+              <Skeleton className="h-4 w-20 rounded-md" />
+              <Skeleton className="h-1 w-1 rounded-full" />
+              <Skeleton className="h-4 w-16 rounded-md" />
+              <Skeleton className="h-1 w-1 rounded-full" />
+              <Skeleton className="h-4 w-12 rounded-md" />
             </div>
             
             {/* Tags Skeleton */}
-            <div className="flex items-center gap-4 mt-6">
+            <div className="flex justify-center mt-3">
               <div className="flex gap-2">
                 <Skeleton className="h-7 w-16 rounded-full" />
                 <Skeleton className="h-7 w-20 rounded-full" />
                 <Skeleton className="h-7 w-14 rounded-full" />
               </div>
-              <Skeleton className="h-8 w-16 rounded-md" /> {/* Like/Share button */}
             </div>
           </header>
           
@@ -64,6 +69,19 @@ export default function Loading() {
         
         <div className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800">
           <Footer />
+        </div>
+      </div>
+      
+      {/* Table of Contents Skeleton (Hidden on mobile) */}
+      <div className="hidden xl:flex flex-col sticky top-28 w-64 text-sm self-start">
+        <Skeleton className="h-5 w-24 mb-4 rounded-md" />
+        <div className="flex flex-col gap-3 border-l border-zinc-200 dark:border-zinc-800 pb-8 pl-4">
+          <Skeleton className="h-4 w-[90%] rounded-md" />
+          <Skeleton className="h-4 w-[75%] rounded-md" />
+          <Skeleton className="h-4 w-[60%] rounded-md ml-4" />
+          <Skeleton className="h-4 w-[80%] rounded-md ml-4" />
+          <Skeleton className="h-4 w-[85%] rounded-md" />
+          <Skeleton className="h-4 w-[70%] rounded-md" />
         </div>
       </div>
       </div>

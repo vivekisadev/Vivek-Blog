@@ -59,3 +59,11 @@ model Simulation {
   content   String
   createdAt DateTime @default(now())
 }
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  slug      String
+  name      String
+  message   String
+  createdAt DateTime @default(now())
+}
