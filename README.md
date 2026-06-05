@@ -1,89 +1,116 @@
-Vivek's Blog - 
-A minimalist personal blog system built with Next.js 15+.
-```
-Technology Stack
-    Framework: Next.js 13+ (App Router)
-    Styling: Tailwind CSS
-    Icons: Lucide Icons & react-icons
-    Theming: Supports dark/light mode switching
-    Deployment: Vercel
-Features
-    📝 Markdown-based article support
-    🌓 Dark/light theme toggle
-    📱 Responsive design
-    ⚡ Fast page loading
-    📅 Article timeline display
-```
+# Vivek's Blog
 
-Project Structure
+A minimalist, feature-rich personal blog built with Next.js 15+ and the App Router.
+
+## 🚀 Features
+
+- **📝 Markdown & MDX Support**: Write articles and notes effortlessly.
+- **🎨 Modern UI**: Styled with Tailwind CSS and Radix UI primitives.
+- **🌓 Dark/Light Mode**: Full theme support.
+- **📊 Database Integration**: Powered by Prisma ORM and PostgreSQL.
+- **💬 Comments System**: Integrated with Giscus for GitHub-based discussions.
+- **✨ Code & Math Rendering**: Syntax highlighting with Shiki/Highlight.js and Math support via KaTeX.
+- **📱 Responsive Design**: Optimized for all devices.
+- **⚡ Fast Performance**: Static generation, fast page loading, and optimized assets.
+- ** RSS Feed**: Automated RSS feed generation.
+- **🛡️ Admin Dashboard**: A secret admin dashboard to create and manage posts or notes directly from the website.
+
+## 💻 Technology Stack
+
+- **Framework**: Next.js 15+ (React 19)
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI
+- **Database ORM**: Prisma
+- **Icons**: Lucide React & React Icons
+- **Animations**: Framer Motion
+- **Package Manager**: pnpm
+- **Deployment**: Vercel
+
+## 📂 Project Structure
 
 ```text
 .
-├── app/
-│   ├── lib/           # Utility functions and data processing
-│   ├── posts/         # Blog articles
-│   └── page.tsx       # Homepage
-├── content/
-│   ├── notes/         # Short notes
-│   └── posts/         # Articles
-├── components/        # React components
+├── app/               # Next.js App Router (Pages, Layouts, API routes)
+├── components/        # Reusable React components (UI, Layout, MDX)
+├── content/           # Content directory
+│   ├── notes/         # Short-form notes
+│   └── posts/         # Long-form blog articles
+├── lib/               # Utility functions and configurations
+├── prisma/            # Database schema and migrations
 ├── public/            # Static assets
-└── styles/            # Global styles
-
-```
-# Installation and Running
-1. Clone the project:
-```bash
-
-git clone https://github.com/vivekisadev/Vivek-Blog.git
-cd jimmy-blog
+├── scripts/           # Build scripts (e.g., RSS generation)
+└── styles/            # Global CSS and Tailwind styles
 ```
 
-2. Install dependencies:
-```bash
+## 🛠️ Installation & Setup
 
-npm install --legacy-peer-deps
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/vivekisadev/Vivek-Blog.git
+   cd Vivek-Blog
+   ```
 
-3. Run the development server:
-```bash
+2. **Install dependencies:**
+   This project uses `pnpm`. If you don't have it installed, you can install it via npm (`npm install -g pnpm`).
+   ```bash
+   pnpm install
+   ```
 
-npm run dev
-```
+3. **Environment Variables:**
+   Create a `.env.local` file and add necessary environment variables (Database URL, etc.) by referencing `.env` if available.
 
-4. Build for production:
-```bash
-npm run build
-```
+4. **Database Setup:**
+   ```bash
+   pnpm run generate
+   ```
 
-# Adding New Articles
-1. Create a new Markdown file in the content/posts directory.
-2. Use the naming format: xxx.md.
-3. Add metadata at the top of the file:
+5. **Run the development server:**
+   ```bash
+   pnpm run dev
+   ```
 
-```markdown
----
-title: Article Title
-date: YYYY-MM-DD
-tags: ["tag1", "tag2", "tag3"]
----
-```
+6. **Build for production:**
+   ```bash
+   pnpm run build
+   ```
 
-# Adding Notes
-1. Create a new Markdown file in the content/notes directory.
-2. Use the naming format: YYYY-MM-DD-title.md.
-3. Add metadata at the top of the file:
+## ✍️ Content Creation
 
-```markdown
----
-date: YYYY-MM-DD
----
-```
-# Deployment
-The project is configured for Vercel deployment, supporting automatic builds and deployments. Push code to the GitHub repository, and Vercel will handle the rest.
+You can create content in two ways: through the secret admin dashboard on the website, or manually via Markdown files.
 
-# Contribution
-Feel free to submit Issues and Pull Requests!
+### 1. Via Admin Dashboard (Recommended)
+Access the secret admin dashboard to write, preview, and publish posts or notes directly from the website interface without needing to edit local files.
 
-# License
-MIT License
+### 2. Manual Creation
+
+#### Adding New Articles
+1. Create a new Markdown (`.md` or `.mdx`) file in the `content/posts/` directory.
+2. Add the required frontmatter at the top of the file:
+   ```markdown
+   ---
+   title: Your Article Title
+   date: YYYY-MM-DD
+   tags: ["tag1", "tag2"]
+   ---
+   ```
+
+#### Adding Notes
+1. Create a new file in the `content/notes/` directory.
+2. Add the frontmatter:
+   ```markdown
+   ---
+   date: YYYY-MM-DD
+   ---
+   ```
+
+## 🚀 Deployment
+
+The project is optimized for [Vercel](https://vercel.com/). You can connect your GitHub repository to Vercel for automatic deployments on push.
+
+## 🤝 Contribution
+
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+## 📝 License
+
+This project is licensed under the MIT License.
