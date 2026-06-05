@@ -7,7 +7,6 @@ import { Tags } from "@/components/tag"
 import { MarkdownContent } from "@/components/markdown-content"
 import { Metadata } from 'next'
 import { LikeShareButtons } from "@/components/like-share-buttons"
-import { ScrollProgress } from "@/components/scroll-progress"
 import { Clock, Calendar } from "lucide-react"
 import TextReveal from '@/components/forgeui/text-reveal'
 import { ViewCounter } from "@/components/view-counter"
@@ -50,7 +49,6 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
 
     return (
       <Layout>
-        <ScrollProgress />
         <div className="max-w-7xl mx-auto px-4 xl:px-8 flex gap-12 justify-center">
           <div className="flex-1 w-full max-w-3xl py-6 min-w-0">
             
@@ -60,7 +58,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                 <TextReveal
                   staggerDelay={0.05}
                   text={post.title}
-                  className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-bold tracking-normal text-zinc-800 dark:text-zinc-200 leading-snug"
                 />
                 <AdminControls type="post" id={id} />
               </div>

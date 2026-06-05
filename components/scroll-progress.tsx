@@ -13,7 +13,7 @@ export function ScrollProgress() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-zinc-500 to-zinc-900 dark:from-zinc-400 dark:to-zinc-100 origin-left z-50"
+      className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-gradient-to-r from-zinc-800 to-zinc-400 dark:from-zinc-200 dark:to-zinc-500 origin-left z-50"
       style={{ scaleX }}
     />
   )

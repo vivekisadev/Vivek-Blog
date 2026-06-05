@@ -105,9 +105,7 @@ export default function RootLayout({
           </Suspense>
           <MediaPopupProvider>
             <CommandPalette />
-            <div className="max-w-5xl mx-auto px-4 mt-6">
-              <Header />
-            </div>
+            <Header />
             {children}
           </MediaPopupProvider>
           {process.env.NEXT_PUBLIC_GA_ID && (

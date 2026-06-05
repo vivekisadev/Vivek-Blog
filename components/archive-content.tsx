@@ -90,7 +90,7 @@ export function ArchiveContent({ initialData }: ArchiveContentProps) {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Tags</SelectItem>
-          {allTags.map(({ tag }) => (
+          {allTags.filter(({ tag }) => tag && tag.trim() !== "").map(({ tag }) => (
             <SelectItem key={tag} value={tag}>
               {tag}
             </SelectItem>
