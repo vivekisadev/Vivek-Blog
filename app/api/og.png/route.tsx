@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
             width: "100%",
             display: "flex",
             backgroundColor: "#ffffff",
-            padding: "60px",
+            padding: "80px",
             fontFamily: "Inter, sans-serif",
             flexDirection: "column",
           }}
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
                 display: "flex",
                 flexDirection: "column",
                 width: "75%",
+                paddingRight: "40px",
               }}
             >
               <div
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
               
               <div
                 style={{
-                  fontSize: 72,
+                  fontSize: title.length > 70 ? 48 : title.length > 45 ? 56 : 72,
                   fontWeight: 700,
                   color: "#24292f", // GitHub dark text
                   lineHeight: 1.2,
@@ -132,14 +133,12 @@ export async function GET(req: NextRequest) {
                 border: "1px solid #e1e4e8",
               }}
             >
-              <svg viewBox="0 0 5 5" width="140" height="140">
-                <rect x="0" y="0" width="5" height="5" fill="#f4f5f6" />
-                <rect x="1" y="0" width="1" height="5" fill="#a3d242" />
-                <rect x="3" y="0" width="1" height="5" fill="#a3d242" />
-                <rect x="0" y="1" width="5" height="1" fill="#a3d242" />
-                <rect x="0" y="3" width="5" height="1" fill="#a3d242" />
-                <rect x="2" y="2" width="1" height="1" fill="#a3d242" />
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={new URL("/viveklogo.jpg", req.url).toString()}
+                alt="Vivek Logo"
+                style={{ width: "140px", height: "140px", objectFit: "cover" }}
+              />
             </div>
           </div>
 
@@ -151,7 +150,7 @@ export async function GET(req: NextRequest) {
               justifyContent: "space-between",
               width: "100%",
               borderTop: "1px solid #d0d7de",
-              paddingTop: "40px",
+              paddingTop: "32px",
               marginTop: "auto",
             }}
           >
@@ -164,24 +163,23 @@ export async function GET(req: NextRequest) {
             >
               <div
                 style={{
-                  width: "40px",
-                  height: "40px",
+                  width: "48px",
+                  height: "48px",
                   borderRadius: "50%",
-                  backgroundColor: "#a3d242",
+                  backgroundColor: "#f4f5f6",
+                  border: "1px solid #e1e4e8",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   overflow: "hidden",
                 }}
               >
-                <svg viewBox="0 0 5 5" width="40" height="40">
-                  <rect x="0" y="0" width="5" height="5" fill="#f4f5f6" />
-                  <rect x="1" y="0" width="1" height="5" fill="#a3d242" />
-                  <rect x="3" y="0" width="1" height="5" fill="#a3d242" />
-                  <rect x="0" y="1" width="5" height="1" fill="#a3d242" />
-                  <rect x="0" y="3" width="5" height="1" fill="#a3d242" />
-                  <rect x="2" y="2" width="1" height="1" fill="#a3d242" />
-                </svg>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={new URL("/viveklogo.jpg", req.url).toString()}
+                  alt="Vivek Logo"
+                  style={{ width: "48px", height: "48px", objectFit: "cover" }}
+                />
               </div>
               <div
                 style={{
