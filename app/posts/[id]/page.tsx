@@ -82,7 +82,14 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
                   <span>{commentCount}</span>
                 </div>
                 <span>•</span>
-                <LikeShareButtons id={post.id} title={post.title} excerpt={post.excerpt || ""} initialLikes={initialLikes} />
+                <LikeShareButtons 
+                  id={post.id} 
+                  title={post.title} 
+                  excerpt={post.excerpt || ""} 
+                  initialLikes={initialLikes} 
+                  date={new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  readingTime={readingTime}
+                />
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex justify-center mt-3">
