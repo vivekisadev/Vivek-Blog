@@ -8,7 +8,7 @@ declare global {
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  connectionTimeoutMillis: 10000, // Wait 10s for Neon cold start
+  connectionTimeoutMillis: 20000, // Wait 20s for Neon cold start
   idleTimeoutMillis: 30000,
   max: 15,
   ssl: { rejectUnauthorized: false }, // Neon requires SSL

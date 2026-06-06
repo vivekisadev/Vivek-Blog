@@ -20,6 +20,8 @@ import { TableOfContents } from "@/components/table-of-contents"
 export const dynamic = 'force-static'
 export const revalidate = false 
 
+export { generateMetadata } from "@/app/lib/posts"
+
 export default async function Post({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const id = resolvedParams?.id

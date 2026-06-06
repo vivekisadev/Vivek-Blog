@@ -162,15 +162,33 @@ export async function getPostById(id: string) {
       } as PostData
     }
 
-    // 2. Try database
-    const dbPost = await prisma.post.findFirst({
-      where: {
-        OR: [
-          { slug: id },
-          { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
-        ]
+    // 2. Try database with simple retry mechanism for Neon cold starts
+    let dbPost = null;
+    let retries = 1;
+    
+    while (retries >= 0) {
+      try {
+        dbPost = await prisma.post.findFirst({
+          where: {
+            OR: [
+              { slug: id },
+              { id: isNaN(parseInt(id)) ? -1 : parseInt(id) }
+            ]
+          }
+        });
+        break; // Success
+      } catch (dbError: any) {
+        if (retries === 0) {
+          console.error(`Database query failed for post ${id} after retries:`, dbError);
+          // Instead of returning null and triggering a 404 immediately, we throw
+          // to trigger a 500 Server Error if it's genuinely a DB failure
+          throw new Error("Database connection failed"); 
+        }
+        console.log(`Database connection timeout or error. Retrying... (${retries} left)`);
+        retries--;
+        await new Promise(resolve => setTimeout(resolve, 2000)); // wait 2s before retry
       }
-    })
+    }
 
       if (dbPost) {
         const processedContent = await remark()
@@ -199,6 +217,10 @@ export async function getPostById(id: string) {
     return null
   } catch (error) {
     console.error(`Getting blog posts ${id} failure:`, error)
+    // If it's our explicitly thrown DB error, let it propagate to trigger a 500 error page
+    if (error instanceof Error && error.message === "Database connection failed") {
+      throw error;
+    }
     return null
   }
 }
@@ -287,7 +309,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       locale: 'en',
       images: [
         {
-          url: `https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}`,
+          url: `https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}&readingTime=${post.readingTime || 1}`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -298,7 +320,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: 'summary_large_image',
       title: post.title,
       description,
-      images: [`https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}`],
+      images: [`https://blogsbyvivek.vercel.app/api/og?title=${encodeURIComponent(post.title)}&date=${encodeURIComponent(new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}&readingTime=${post.readingTime || 1}`],
     },
   }
 }
