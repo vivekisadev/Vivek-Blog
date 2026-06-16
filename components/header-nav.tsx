@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Archive, User, Pencil, Moon, Sun, Book } from "lucide-react"
+import { Archive, User, Pencil, Moon, Sun, Book, FileText } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { useEffect, useState, useCallback } from "react"
@@ -84,6 +84,14 @@ export function HeaderNav() {
       >
         <Book className={iconClasses('/books')} />
         <span className="hidden sm:inline">Library</span>
+      </Link>
+      <Link 
+        href="/changelog" 
+        className={linkClasses('/changelog')}
+        title="Changelog"
+      >
+        <FileText className={iconClasses('/changelog')} />
+        <span className="hidden sm:inline">Changelog</span>
       </Link>
       <Link 
         href="/about" 

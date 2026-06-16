@@ -105,7 +105,8 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         </span>
       `
 
-      const openPopup = () => {
+      const openPopup = (e?: Event) => {
+        if (e) e.preventDefault()
         if ((window as any).__openMediaPopup) {
           (window as any).__openMediaPopup(type, src, title)
         }
@@ -120,27 +121,30 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       })
     })
 
-    // 3. Intercept standard anchor tags to open external links in media popup
-    const links = contentRef.current.querySelectorAll('a:not(.media-popup-trigger)')
-    links.forEach((a) => {
-      const href = a.getAttribute('href')
-      if (!href) return
+    // 3. Intercept standard anchor tags using event delegation
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const a = target.closest('a:not(.media-popup-trigger)');
+      if (!a) return;
       
-      // Intercept all links to open in the media popup
-      if (href.startsWith('http') || href.startsWith('/')) {
-        a.addEventListener('click', (e) => {
-          e.preventDefault()
-          
-          let type: "video" | "iframe" | "image" = "iframe"
-          if (href.includes('youtube.com') || href.includes('youtu.be')) type = "video"
-          else if (href.match(/\.(jpeg|jpg|gif|png)$/i)) type = "image"
-          
-          if ((window as any).__openMediaPopup) {
-            (window as any).__openMediaPopup(type, href, a.textContent || 'Link')
-          }
-        })
+      const href = a.getAttribute('href');
+      if (!href) return;
+      
+      if (!href.startsWith('#') && !href.startsWith('mailto:')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        let type: "video" | "iframe" | "image" = "iframe";
+        if (href.includes('youtube.com') || href.includes('youtu.be')) type = "video";
+        else if (href.match(/\.(jpeg|jpg|gif|png)$/i)) type = "image";
+        
+        if ((window as any).__openMediaPopup) {
+          (window as any).__openMediaPopup(type, href, a.textContent || 'Link');
+        }
       }
-    })
+    };
+
+    contentRef.current.addEventListener('click', handleLinkClick);
 
     return () => {
       zoom.detach()
@@ -152,12 +156,16 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         }
         wrapper.remove()
       })
+      if (contentRef.current) {
+        contentRef.current.removeEventListener('click', handleLinkClick);
+      }
     }
   }, [content])
 
   return (
     <ScrollReveal yOffset={30} delay={0.2}>
       <div 
+        ref={contentRef}
         className="prose prose-zinc dark:prose-invert prose-sm max-w-none w-full break-words dark:text-zinc-200 prose-img:rounded-xl prose-img:shadow-md prose-img:cursor-zoom-in prose-a:text-blue-500 hover:prose-a:text-blue-600 transition-colors"
         dangerouslySetInnerHTML={{ __html: processContent(content) }}
       />

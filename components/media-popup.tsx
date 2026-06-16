@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X, Loader2, Maximize2, Minimize2 } from "lucide-react"
+import { X, Loader2, Maximize2, Minimize2, ExternalLink } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface MediaPopupProps {
@@ -86,6 +86,16 @@ export function MediaPopup({ type, src, title, open, onOpenChange }: MediaPopupP
                     {title}
                   </DialogPrimitive.Title>
                   <div className="flex items-center gap-1">
+                    <a
+                      href={src}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="shrink-0 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700/50 transition-all duration-150"
+                      title="Open in new window"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
                     <button
                       onClick={(e) => { e.stopPropagation(); setIsFullscreen(!isFullscreen); }}
                       className="shrink-0 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700/50 transition-all duration-150"

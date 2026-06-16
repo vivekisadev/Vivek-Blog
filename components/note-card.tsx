@@ -99,7 +99,8 @@ export function NoteCard({ note, isLast }: { note: Note; isLast?: boolean }) {
         </span>
       `
 
-      const openPopup = () => {
+      const openPopup = (e?: Event) => {
+        if (e) e.preventDefault()
         if ((window as any).__openMediaPopup) {
           (window as any).__openMediaPopup(type, src, title)
         }
@@ -114,29 +115,37 @@ export function NoteCard({ note, isLast }: { note: Note; isLast?: boolean }) {
       })
     })
 
-    // 3. Intercept standard anchor tags to open external links in media popup
-    const links = contentRef.current.querySelectorAll('a:not(.media-popup-trigger)')
-    links.forEach((a) => {
-      const href = a.getAttribute('href')
-      if (!href) return
+    // 3. Intercept standard anchor tags using event delegation
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const a = target.closest('a:not(.media-popup-trigger)');
+      if (!a) return;
       
-      // Only intercept external links
-      if (href.startsWith('http') && !href.includes(window.location.host)) {
-        a.addEventListener('click', (e) => {
-          e.preventDefault()
-          
-          let type: "video" | "iframe" | "image" = "iframe"
-          if (href.includes('youtube.com') || href.includes('youtu.be')) type = "video"
-          else if (href.match(/\.(jpeg|jpg|gif|png)$/i)) type = "image"
-          
-          if ((window as any).__openMediaPopup) {
-            (window as any).__openMediaPopup(type, href, a.textContent || 'Link')
-          }
-        })
+      const href = a.getAttribute('href');
+      if (!href) return;
+      
+      if (!href.startsWith('#') && !href.startsWith('mailto:')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        let type: "video" | "iframe" | "image" = "iframe";
+        if (href.includes('youtube.com') || href.includes('youtu.be')) type = "video";
+        else if (href.match(/\.(jpeg|jpg|gif|png)$/i)) type = "image";
+        
+        if ((window as any).__openMediaPopup) {
+          (window as any).__openMediaPopup(type, href, a.textContent || 'Link');
+        }
       }
-    })
+    };
 
-    return () => { zoom.detach() }
+    contentRef.current.addEventListener('click', handleLinkClick);
+
+    return () => { 
+      zoom.detach()
+      if (contentRef.current) {
+        contentRef.current.removeEventListener('click', handleLinkClick);
+      }
+    }
   }, [note.content])
 
   return (
